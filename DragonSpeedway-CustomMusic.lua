@@ -13,8 +13,8 @@ local LSM = LibStub("LibSharedMedia-3.0")
 -- HOW TO ADD CUSTOM MUSIC AND SOUNDS
 
 -- Custom music/sounds require the usage of LibSharedMedia since 8.2
--- Each MUSIC file needs to be placed in: <WoW directory>\_retail\Interface\Addons\DragonSpeedway\Music\Custom\
--- Each SOUND file needs to be placed in: <WoW directory>\_retail\Interface\Addons\DragonSpeedway\Sounds\Custom\
+-- Each MUSIC file needs to be placed in: World of Warcraft\_retail_\Interface\Addons\DragonSpeedway\Music\Custom\
+-- Each SOUND file needs to be placed in: World of Warcraft\_retail_\Interface\Addons\DragonSpeedway\Sounds\Custom\
 -- The file path should look like this: Interface\Addons\DragonSpeedway\Music\Custom\name-of-music-file.mp3
 -- Use only .mp3 and .ogg files
 
