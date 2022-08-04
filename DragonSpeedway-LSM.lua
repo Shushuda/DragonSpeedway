@@ -37,6 +37,6 @@ LSM:Register("sound", "Mushroom Speedway", [[Interface\Addons\DragonSpeedway\Mus
 
 -- register sound effects
 
-LSM:Register("sound", "Tada", [[Interface\Addons\DragonSpeedway\Sounds\spyro 3 - tada.mp3]])
-LSM:Register("sound", "AirHorn Final", [[Interface\Addons\DragonSpeedway\Sounds\spyro 3 - airhorn final.mp3]])
-LSM:Register("sound", "Gem Get", [[Interface\Addons\DragonSpeedway\Sounds\spyro 3 - GemGet.mp3]])
+LSM:Register("sound", "Tada", [[Interface\Addons\DragonSpeedway\Sounds\tada.mp3]])
+LSM:Register("sound", "AirHorn Final", [[Interface\Addons\DragonSpeedway\Sounds\airhorn final.mp3]])
+LSM:Register("sound", "Gem Get", [[Interface\Addons\DragonSpeedway\Sounds\GemGet.mp3]])
