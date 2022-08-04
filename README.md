@@ -104,7 +104,7 @@ LSM:Register("sound", "Tu tu ru tuuu", [[Interface\Addons\DragonSpeedway\Sounds\
 
 ## Authors
 
-* **Weronika Sikora** - [Shushuda](https://github.com/Shushuda)
+* [Shushuda](https://github.com/Shushuda)
 
 ## License
 
