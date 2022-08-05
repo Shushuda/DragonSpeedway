@@ -24,7 +24,7 @@ The **DragonSpeedway-CustomMusic.lua** file contains proper sections and tldr ex
 1. Download the addon (if you haven't already) - either use an addon manager or manually place the **DragonSpeedway** addon folder inside **World of Warcraft\\_retail\_\Interface\AddOns\\**.
 2. Go inside the addon directory - **DragonSpeedway**.
 3. Go inside the **Music** directory.
-4. Go inside **Spyro Reignited 1** directory and add your music files in either **.mp3** or **.ogg** format. It does NOT have to be Reignited versions, you can use classic music if you prefer. These files **HAVE TO** follow this naming convention:
+4. Go inside **Spyro Reignited 1** directory and add your music files in **.mp3** format. It does NOT have to be Reignited versions, you can use classic music if you prefer. These files **HAVE TO** follow this naming convention:
 ```
 crystal-flight.mp3
 icy-flight.mp3
