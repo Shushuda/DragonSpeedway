@@ -129,32 +129,32 @@ function DragonSpeedway:handleDragonRaceCountdown()
     -- find this sound x.x
     --print("The buff was the Lightning Shield!") -- debug
     -- debug
-    if self.db.enableCountdownSound then
+    --if self.db.enableCountdownSound then
         --print("countdown sound enabled")
-    else
+    --else
         --print("countdown sound disabled")
-    end
+    --end
 end
 
 
 -- event handler event methods
 
 function DragonSpeedway:OnEvent(event, ...)
-	self[event](self, event, ...)
+    self[event](self, event, ...)
 end
 
 function DragonSpeedway:ADDON_LOADED(event, addOnName)
-	if addOnName == "DragonSpeedway" then
+    if addOnName == "DragonSpeedway" then
         print(addOnName, "loaded. Type '/ds' for settings or '/ds stop' for stopping the music")
         
         -- initialize saved variables
         DragonSpeedwayDB = DragonSpeedwayDB or {}
         self.db = DragonSpeedwayDB
         for key, value in pairs(self.defaults) do
-			if self.db[key] == nil then
-				self.db[key] = value
-			end
-		end
+	    if self.db[key] == nil then
+	        self.db[key] = value
+	    end
+	end
         
         -- build hashtable of sounds
         self.hashtable = LSM:HashTable("sound")
@@ -180,8 +180,8 @@ function DragonSpeedway:UNIT_AURA(event, ...)
     --print("Some buffs changed somewhere") -- debug
 
     if AuraUtil.ShouldSkipAuraUpdate(isFullUpdate, updatedAuras, isAuraDragonRace, unitTarget) then
-		return
-	end
+        return
+    end
     
     if updatedAuras then
         for _, auraInfo in ipairs(updatedAuras) do
