@@ -146,10 +146,10 @@ function DragonSpeedway:ADDON_LOADED(event, addOnName)
         DragonSpeedwayDB = DragonSpeedwayDB or {}
         self.db = DragonSpeedwayDB
         for key, value in pairs(self.defaults) do
-			if self.db[key] == nil then
-				self.db[key] = value
-			end
-		end
+            if self.db[key] == nil then
+                self.db[key] = value
+            end
+        end
         
         -- build hashtable of sounds
         self.hashtable = LSM:HashTable("sound")
