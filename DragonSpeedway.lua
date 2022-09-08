@@ -17,8 +17,6 @@ function SlashCmdList.DRAGONSPEEDWAY(msg, editBox)
         print("DragonSpeedway - stopping the music")
         StopMusic()
     else
-        -- https://github.com/Stanzilla/WoWUIBugs/issues/89
-        Settings.OpenToCategory(DragonSpeedway.category.name)
         Settings.OpenToCategory(DragonSpeedway.category.name)
     end
 end
