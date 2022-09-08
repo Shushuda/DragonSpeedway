@@ -115,3 +115,4 @@ This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.t
 * [Elkano](https://www.curseforge.com/members/elkano/) for [LibSharedMedia-3.0](https://www.curseforge.com/wow/addons/libsharedmedia-3-0)
 * [nevcairiel](https://www.curseforge.com/members/nevcairiel/) for [CallbackHandler-1.0](https://www.curseforge.com/wow/addons/callbackhandler)
 * Kaelten, Cladhaire, ckknight, Mikk, Ammo, Nevcairiel and joshborke for [LibStub](https://www.curseforge.com/wow/addons/libstub)
+* [WoWpedia](https://wowpedia.fandom.com/) for their knowledge base and tutorials
