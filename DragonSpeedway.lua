@@ -18,49 +18,17 @@ function SlashCmdList.DRAGONSPEEDWAY(msg, editBox)
         StopMusic()
     else
         -- https://github.com/Stanzilla/WoWUIBugs/issues/89
-        InterfaceOptionsFrame_OpenToCategory(DragonSpeedway.panel)
-        InterfaceOptionsFrame_OpenToCategory(DragonSpeedway.panel)
+        Settings.OpenToCategory(DragonSpeedway.category.name)
+        Settings.OpenToCategory(DragonSpeedway.category.name)
     end
 end
 
 
 -- local vars
 
-local dragonRaceSpellId, dragonRaceCountdownSpellId = 110051, 192106 -- TODO: Replace with correct IDs
-local isDragonRaceActive, isDragonRaceCountdownActive, dragonRaceCountdownTimer = false, false, 0
-
-
--- local functions
-
-local function isAuraDragonRaceBuff(auraInfo)
-    -- Dragon Race buff
-	if auraInfo.spellId == dragonRaceSpellId then
-		return true
-    else
-        return false
-    end
-end
-
-local function isAuraDragonRaceCountdown(auraInfo)
-    -- Dragon Race countdown buff
-    if auraInfo.spellId == dragonRaceCountdownSpellId then
-        return true
-    else
-        return false
-    end
-end
-
-local function isAuraDragonRace(auraInfo, unitTarget)
-    if unitTarget ~= "player" then
-        return false
-    elseif isAuraDragonRaceBuff(auraInfo) then
-        return true
-    elseif isAuraDragonRaceCountdown(auraInfo) then
-        return true
-    else
-        return false
-    end
-end
+local dragonRaceSpellId, dragonRaceCountdownSpellId = 183117, 192106 -- TODO: Replace with correct IDs
+local dragonRaceCountdownTimer = 0
+local raceInstanceID, raceCountdownInstanceId = nil, nil
 
 
 -- event handler frame
@@ -102,25 +70,52 @@ end
 
 -- event handler methods
 
-function DragonSpeedway:handleDragonRace()
-    if isDragonRaceActive then
-        isDragonRaceActive = false
-        if self.db.enableVictorySound then
-            local victory = LSM:Fetch("sound", self.db.victorySound, noDefault)
-            PlaySoundFile(victory, "SFX")
+function DragonSpeedway:handleAuraUpdate(unitAuraUpdateInfo)
+    -- remember race and countdown aura instance IDs
+    -- and handle the sound start-up
+    if unitAuraUpdateInfo.addedAuras ~= nil then
+        for _, aura in ipairs(unitAuraUpdateInfo.addedAuras) do
+            if aura.spellId == dragonRaceSpellId then
+                raceInstanceID = aura.auraInstanceID
+                self:handleDragonRaceStart()
+            end
+            if aura.spellId == dragonRaceCountdownSpellId then
+                raceCountdownInstanceId = aura.auraInstanceID
+                self:handleDragonRaceCountdown()
+            end
         end
-        StopMusic()
-    else
-        isDragonRaceActive = true
-        if self.db.enableMusic then
-            local bgm = LSM:Fetch("sound", self.db.music, noDefault)
-            PlayMusic(bgm)
-        end
-        if self.db.enableCountdownFinalSound then
-            local cdm = LSM:Fetch("sound", self.db.countdownFinalSound, noDefault)
-            PlaySoundFile(cdm, "SFX")
+        
+    end
+    
+    -- check if removed auras include the remembered race instance ID
+    -- and handle the sound stop
+    if unitAuraUpdateInfo.removedAuraInstanceIDs ~= nil then
+        for _, auraInstanceID in ipairs(unitAuraUpdateInfo.removedAuraInstanceIDs) do
+            if auraInstanceID == raceInstanceID then
+                raceInstanceID = nil
+                self:handleDragonRaceEnd()
+            end
         end
     end
+end
+
+function DragonSpeedway:handleDragonRaceStart()
+    if self.db.enableMusic then
+        local bgm = LSM:Fetch("sound", self.db.music, noDefault)
+        PlayMusic(bgm)
+    end
+    if self.db.enableCountdownFinalSound then
+        local cdm = LSM:Fetch("sound", self.db.countdownFinalSound, noDefault)
+        PlaySoundFile(cdm, "SFX")
+    end
+end
+
+function DragonSpeedway:handleDragonRaceEnd()
+    if self.db.enableVictorySound then
+        local victory = LSM:Fetch("sound", self.db.victorySound, noDefault)
+        PlaySoundFile(victory, "SFX")
+    end
+    StopMusic()
 end
 
 function DragonSpeedway:handleDragonRaceCountdown()
@@ -129,32 +124,32 @@ function DragonSpeedway:handleDragonRaceCountdown()
     -- find this sound x.x
     --print("The buff was the Lightning Shield!") -- debug
     -- debug
-    --if self.db.enableCountdownSound then
+    if self.db.enableCountdownSound then
         --print("countdown sound enabled")
-    --else
+    else
         --print("countdown sound disabled")
-    --end
+    end
 end
 
 
 -- event handler event methods
 
 function DragonSpeedway:OnEvent(event, ...)
-    self[event](self, event, ...)
+	self[event](self, event, ...)
 end
 
 function DragonSpeedway:ADDON_LOADED(event, addOnName)
-    if addOnName == "DragonSpeedway" then
+	if addOnName == "DragonSpeedway" then
         print(addOnName, "loaded. Type '/ds' for settings or '/ds stop' for stopping the music")
         
         -- initialize saved variables
         DragonSpeedwayDB = DragonSpeedwayDB or {}
         self.db = DragonSpeedwayDB
         for key, value in pairs(self.defaults) do
-	    if self.db[key] == nil then
-	        self.db[key] = value
-	    end
-	end
+			if self.db[key] == nil then
+				self.db[key] = value
+			end
+		end
         
         -- build hashtable of sounds
         self.hashtable = LSM:HashTable("sound")
@@ -175,22 +170,16 @@ function DragonSpeedway:ADDON_LOADED(event, addOnName)
 end
 
 function DragonSpeedway:UNIT_AURA(event, ...)
-    local unitTarget, isFullUpdate, updatedAuras = ...
+    local unitTarget, unitAuraUpdateInfo = ...
     
-    --print("Some buffs changed somewhere") -- debug
-
-    if AuraUtil.ShouldSkipAuraUpdate(isFullUpdate, updatedAuras, isAuraDragonRace, unitTarget) then
+    if unitTarget ~= "player" then
         return
     end
     
-    if updatedAuras then
-        for _, auraInfo in ipairs(updatedAuras) do
-            if isAuraDragonRaceCountdown(auraInfo) then
-                self:handleDragonRaceCountdown()
-            elseif isAuraDragonRaceBuff(auraInfo) then
-                self:handleDragonRace()
-            end
-        end
+    --print("Some buffs changed somewhere") -- debug
+    
+    if unitAuraUpdateInfo then
+        self:handleAuraUpdate(unitAuraUpdateInfo)
     end
 end
 
