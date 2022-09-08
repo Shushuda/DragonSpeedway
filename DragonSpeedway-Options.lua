@@ -23,7 +23,7 @@ local spyroThree = "Spyro Reignited Trilogy 3"
 
 -- functions
 
--- OnCLick function for picking an option
+-- OnClick function for picking an option
 local function setValue(self, soundType, newValue, checked)
     if soundType == 'music' then
         DragonSpeedway.db.music = newValue
@@ -138,6 +138,8 @@ function DragonSpeedway:InitializeOptions()
     self.panel = CreateFrame("Frame")
     self.panel.name = "DragonSpeedway"
     
+    self.category = Settings.RegisterCanvasLayoutCategory(self.panel, self.panel.name)
+    
     local title = self.panel:CreateFontString("ARTWORK", nil, "GameFontNormalLarge")
     title:SetPoint("TOPLEFT", 20, -20)
     title:SetText("DragonSpeedway")
@@ -196,38 +198,42 @@ function DragonSpeedway:InitializeOptions()
     local countdownButton = CreateFrame("CheckButton", nil, self.panel, "InterfaceOptionsCheckButtonTemplate")
 	countdownButton:SetPoint("TOPLEFT", victoryTitle, 0, -70)
 	countdownButton.Text:SetText("[Not Yet Implemented] Enable countdown sound")
-	countdownButton.SetValue = function(_, value)
-		self.db.enableCountdownSound = (value == "1")
-	end
+	countdownButton:SetScript("OnClick", function(self)
+		DragonSpeedway.db.enableCountdownSound = self:GetChecked()
+	end)
     -- initial button state
-	countdownButton:SetChecked(self.db.enableMusic)
+	countdownButton:SetChecked(self.db.enableCountdownSound)
     
     -- countdown final sound
     local countdownFinalButton = CreateFrame("CheckButton", nil, self.panel, "InterfaceOptionsCheckButtonTemplate")
 	countdownFinalButton:SetPoint("TOPLEFT", countdownButton, 0, -40)
 	countdownFinalButton.Text:SetText("Enable race started sound")
-	countdownFinalButton.SetValue = function(_, value)
-		self.db.enableCountdownFinalSound = (value == "1")
-	end
+	countdownFinalButton:SetScript("OnClick", function(self)
+		DragonSpeedway.db.enableCountdownFinalSound = self:GetChecked()
+	end)
+    -- initial button state
 	countdownFinalButton:SetChecked(self.db.enableCountdownFinalSound)
     
     -- music
     local musicButton = CreateFrame("CheckButton", nil, self.panel, "InterfaceOptionsCheckButtonTemplate")
 	musicButton:SetPoint("TOPLEFT", countdownFinalButton, 0, -40)
 	musicButton.Text:SetText("Enable BGM music")
-	musicButton.SetValue = function(_, value)
-		self.db.enableMusic = (value == "1")
-	end
+	musicButton:SetScript("OnClick", function(self)
+		DragonSpeedway.db.enableMusic = self:GetChecked()
+	end)
+    -- initial button state
 	musicButton:SetChecked(self.db.enableMusic)
     
     -- victory sound
     local victoryButton = CreateFrame("CheckButton", nil, self.panel, "InterfaceOptionsCheckButtonTemplate")
 	victoryButton:SetPoint("TOPLEFT", musicButton, 0, -40)
 	victoryButton.Text:SetText("Enable race finished sound")
-	victoryButton.SetValue = function(_, value)
-		self.db.enableVictorySound = (value == "1")
-	end
+	victoryButton:SetScript("OnClick", function(self)
+		DragonSpeedway.db.enableVictorySound = self:GetChecked()
+	end)
+    -- initial button state
 	victoryButton:SetChecked(self.db.enableVictorySound)
     
-    InterfaceOptions_AddCategory(DragonSpeedway.panel)
+    
+    Settings.RegisterAddOnCategory(self.category)
 end
