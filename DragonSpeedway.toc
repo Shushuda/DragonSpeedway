@@ -1,4 +1,4 @@
-## Interface: 100000
+## Interface: 100002
 ## Version: 1.0.0
 ## Title: Dragon Speedway
 ## Notes: Play the chosen music when dragon racing
