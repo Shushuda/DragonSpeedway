@@ -24,9 +24,9 @@ end
 
 -- local vars
 
-local dragonRaceSpellId, dragonRaceCountdownSpellId = 183117, 192106 -- TODO: Replace with correct IDs
+local dragonRaceSpellId, dragonRaceCountdownSpellId, dragonRacePvPCountdownSpellId = 369968, 392559, 392228
 local dragonRaceCountdownTimer = 0
-local raceInstanceID, raceCountdownInstanceId = nil, nil
+local raceInstanceID, raceCountdownInstanceId, racePvPCountdownInstanceId = nil, nil, nil
 
 
 -- event handler frame
@@ -77,7 +77,7 @@ function DragonSpeedway:handleAuraUpdate(unitAuraUpdateInfo)
                 raceInstanceID = aura.auraInstanceID
                 self:handleDragonRaceStart()
             end
-            if aura.spellId == dragonRaceCountdownSpellId then
+            if aura.spellId == dragonRaceCountdownSpellId or aura.spellId == dragonRacePvPCountdownSpellId then
                 raceCountdownInstanceId = aura.auraInstanceID
                 self:handleDragonRaceCountdown()
             end
