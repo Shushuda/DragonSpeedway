@@ -1,5 +1,5 @@
 ## Interface: 100002
-## Version: 1.0.0
+## Version: 1.0.1
 ## Title: Dragon Speedway
 ## Notes: Play the chosen music when dragon racing
 ## Author: Shushuda
