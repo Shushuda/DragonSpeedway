@@ -29,9 +29,6 @@ local LSM = LibStub("LibSharedMedia-3.0")
 -- Custom music
 
 -- <place the code here>
-LSM:Register("sound", "Shapeshifter", [[Interface\Addons\DragonSpeedway_Music\Music\Custom\shapeshifter.mp3]])
-LSM:Register("sound", "Fireworks Factory (Reignited)", [[Interface\Addons\DragonSpeedway_Music\Music\Custom\fireworks-factory-reignited.mp3]])
-LSM:Register("sound", "Fireworks Factory OLD", [[Interface\Addons\DragonSpeedway_Music\Music\Custom\fireworks-factory-old.mp3]])
 
 
 -- Custom sound effects
