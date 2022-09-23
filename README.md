@@ -5,7 +5,7 @@ This addon is mostly meant to be used with Spyro Flight/Speedway music and sound
 
 ## Mandatory dependencies
 
-This addon requires the DragonSpeedway_Music addon to work. I've separated them into two addons as a workaround for addon managers replacing the music files during update. This way you will only want to update the main DragonSpeedway addon and leave DragonSpeedway_Music outdated. You will also add music only to the DragonSpeedway_Music addon. Keep in mind that DragonSpeedway_Music will be out of date pretty fast, but it will still work fine - just load it anyway. I won't update the TOC because this will just re-trigger this update overwrite issue.
+This addon requires the **DragonSpeedway_Music** addon to work. I've separated them into two addons as a workaround for addon managers replacing the music files during update. This way you will only want to update the main **DragonSpeedway** addon and leave **DragonSpeedway_Music** outdated. You will also add music only to the **DragonSpeedway_Music** addon. Keep in mind that **DragonSpeedway_Music** will be out of date pretty fast, but it will still work fine - just load it anyway. I won't update the TOC because this will just re-trigger this update overwrite issue.
 
 ## But where's the music? The directories and ingame menus are empty! 
 
