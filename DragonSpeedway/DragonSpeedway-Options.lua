@@ -3,6 +3,11 @@
 local addonName, addonVars = ...
 
 
+-- libraries
+
+local LSM = LibStub("LibSharedMedia-3.0")
+
+
 -- local lists and vars
 
 local spyroOne = "Spyro Reignited Trilogy 1"
@@ -157,6 +162,16 @@ function DragonSpeedway:InitializeOptions()
     
     UIDropDownMenu_Initialize(countdownFinalDropDown, countdownFinalDropDownInit, _, 1)
     
+    -- countdown final sound preview button
+    local countdownFinalPlayButton = CreateFrame("Button", nil, self.panel, "UIPanelButtonTemplate")
+	countdownFinalPlayButton:SetPoint("TOPRIGHT", countdownFinalDropDown, 45, -3)
+	countdownFinalPlayButton:SetText("PLAY")
+	countdownFinalPlayButton:SetWidth(50)
+	countdownFinalPlayButton:SetScript("OnClick", function()
+        local cdm = LSM:Fetch("sound", self.db.countdownFinalSound, noDefault)
+        PlaySoundFile(cdm, "SFX")
+	end)
+    
     -- music
     local musicTitle = self.panel:CreateFontString("ARTWORK", nil, "GameFontNormal")
     musicTitle:SetPoint("TOPLEFT", countdownFinalTitle, 0, -60)
@@ -169,6 +184,25 @@ function DragonSpeedway:InitializeOptions()
     
     UIDropDownMenu_Initialize(musicDropDown, musicDropDownInit, _, 1)
     
+    -- music preview button
+    local musicPlayButton = CreateFrame("Button", nil, self.panel, "UIPanelButtonTemplate")
+	musicPlayButton:SetPoint("TOPRIGHT", musicDropDown, 45, -3)
+	musicPlayButton:SetText("PLAY")
+	musicPlayButton:SetWidth(50)
+	musicPlayButton:SetScript("OnClick", function()
+        local bgm = LSM:Fetch("sound", self.db.music, noDefault)
+        PlayMusic(bgm)
+	end)
+    
+    -- music stop button
+    local musicStopButton = CreateFrame("Button", nil, self.panel, "UIPanelButtonTemplate")
+	musicStopButton:SetPoint("TOPRIGHT", musicDropDown, 100, -3)
+	musicStopButton:SetText("STOP")
+	musicStopButton:SetWidth(50)
+	musicStopButton:SetScript("OnClick", function()
+        StopMusic()
+	end)
+    
     -- victory sound
     local victoryTitle = self.panel:CreateFontString("ARTWORK", nil, "GameFontNormal")
     victoryTitle:SetPoint("TOPLEFT", musicTitle, 0, -60)
@@ -180,6 +214,16 @@ function DragonSpeedway:InitializeOptions()
     UIDropDownMenu_SetText(victoryDropDown, self.db.victorySound)
     
     UIDropDownMenu_Initialize(victoryDropDown, victoryDropDownInit, _, 1)
+    
+    -- victory sound preview button
+    local victoryPlayButton = CreateFrame("Button", nil, self.panel, "UIPanelButtonTemplate")
+	victoryPlayButton:SetPoint("TOPRIGHT", victoryDropDown, 45, -3)
+	victoryPlayButton:SetText("PLAY")
+	victoryPlayButton:SetWidth(50)
+	victoryPlayButton:SetScript("OnClick", function()
+        local cdm = LSM:Fetch("sound", self.db.victorySound, noDefault)
+        PlaySoundFile(cdm, "SFX")
+	end)
     
     -- check buttons for disabling specific sounds
     
