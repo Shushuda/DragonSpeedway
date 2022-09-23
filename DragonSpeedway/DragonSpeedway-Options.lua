@@ -2,17 +2,6 @@
 
 local addonName, addonVars = ...
 
-DragonSpeedway.defaults = {
-    music = addonVars.defaultBGM,
-    countdownSound = addonVars.defaultCDM,
-    countdownFinalSound = addonVars.defaultFinalCDM,
-    victorySound = addonVars.defaultVictoryM,
-    enableMusic = true,
-    enableCountdownSound = true,
-    enableCountdownFinalSound = true,
-    enableVictorySound = true,
-}
-
 
 -- local lists and vars
 
