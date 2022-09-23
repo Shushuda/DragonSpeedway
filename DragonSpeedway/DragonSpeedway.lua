@@ -38,31 +38,32 @@ DragonSpeedway = CreateFrame("Frame")
 
 -- generate game group tables
 function DragonSpeedway:generateGameTables()
-    addonVars.spyroOneTable = {}
-    addonVars.spyroTwoTable = {}
-    addonVars.spyroThreeTable = {}
-    addonVars.custom = {}
-    addonVars.sounds = {}
-    
-    for key, value in pairs(self.hashtable) do
-        if string.match(value, "^Interface\\Addons\\DragonSpeedway\\Music\\Spyro Reignited 1\\") then
-            tinsert(addonVars.spyroOneTable, key)
-        elseif string.match(value, "^Interface\\Addons\\DragonSpeedway\\Music\\Spyro Reignited 2\\") then
-            tinsert(addonVars.spyroTwoTable, key)
-        elseif string.match(value, "^Interface\\Addons\\DragonSpeedway\\Music\\Spyro Reignited 3\\") then
-            tinsert(addonVars.spyroThreeTable, key)
-        elseif string.match(value, "^Interface\\Addons\\DragonSpeedway\\Music\\Custom\\") then
-            tinsert(addonVars.custom, key)
-        elseif string.match(value, "^Interface\\Addons\\DragonSpeedway\\Sounds\\") then
-            tinsert(addonVars.sounds, key)
-        end
-    end
-    table.sort(addonVars.spyroOneTable)
-    table.sort(addonVars.spyroTwoTable)
-    table.sort(addonVars.spyroThreeTable)
-    table.sort(addonVars.custom)
-    table.sort(addonVars.sounds)
-    
+    local spyroOneTable, spyroTwoTable, spyroThreeTable, custom, sounds = {}, {}, {}, {}, {}
+
+    spyroOneTable, spyroTwoTable, spyroThreeTable, custom, sounds = DragonSpeedway_generateGameTables(self.hashtable)
+
+    addonVars.spyroOneTable = spyroOneTable
+    addonVars.spyroTwoTable = spyroTwoTable
+    addonVars.spyroThreeTable = spyroThreeTable
+    addonVars.custom = custom
+    addonVars.sounds = sounds    
+end
+
+function DragonSpeedway:generateDefaults()
+    local defaultBGM, defaultFinalCDM, defaultCDM, defaultVictoryM = {}, {}, {}, {}
+
+    defaultBGM, defaultFinalCDM, defaultCDM, defaultVictoryM = DragonSpeedway_generateDefaultMusic()
+
+    self.defaults = {
+        music = defaultBGM,
+        countdownSound = defaultCDM,
+        countdownFinalSound = defaultFinalCDM,
+        victorySound = defaultVictoryM,
+        enableMusic = true,
+        enableCountdownSound = true,
+        enableCountdownFinalSound = true,
+        enableVictorySound = true,
+    }
 end
 
 
@@ -138,11 +139,14 @@ end
 
 function DragonSpeedway:ADDON_LOADED(event, addOnName)
 	if addOnName == "DragonSpeedway" then
-        print(addOnName, "loaded. Type '/ds' for settings or '/ds stop' for stopping the music")
+        print(addOnName, "loaded. Type '/ds' for settings or '/ds stop' for stopping the currently playing music")
         
         -- initialize saved variables
         DragonSpeedwayDB = DragonSpeedwayDB or {}
         self.db = DragonSpeedwayDB
+
+        self:generateDefaults()
+
         for key, value in pairs(self.defaults) do
             if self.db[key] == nil then
                 self.db[key] = value
@@ -153,9 +157,7 @@ function DragonSpeedway:ADDON_LOADED(event, addOnName)
         self.hashtable = LSM:HashTable("sound")
         
         -- validate sounds
-        if LSM:IsValid("sound") then
-            print(addOnName, "- all music validated. Happy Racing!")
-        else
+        if not LSM:IsValid("sound") then
             print(addOnName, "- failed music validation! Check your files!")
         end
         

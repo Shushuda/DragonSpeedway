@@ -1,0 +1,13 @@
+## Interface: 100002
+## Version: 1.1.0
+## Title: DragonSpeedway
+## Notes: Play the chosen music when dragon racing
+## Author: Shushuda
+## SavedVariables: DragonSpeedwayDB
+## Dependencies: DragonSpeedway_Music
+
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+Libs\LibSharedMedia-3.0\lib.xml
+DragonSpeedway.lua
+DragonSpeedway-Options.lua

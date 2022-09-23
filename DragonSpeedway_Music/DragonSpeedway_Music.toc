@@ -1,14 +1,12 @@
 ## Interface: 100002
-## Version: 1.0.1
-## Title: Dragon Speedway
-## Notes: Play the chosen music when dragon racing
+## Version: 1.1.0
+## Title: DragonSpeedway Music Handler
+## Notes: Mandatory plugin for handling music for DragonSpeedway addon
 ## Author: Shushuda
-## SavedVariables: DragonSpeedwayDB
 
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
 Libs\LibSharedMedia-3.0\lib.xml
+DragonSpeedway_Music.lua
 DragonSpeedway-LSM.lua
 DragonSpeedway-CustomMusic.lua
-DragonSpeedway.lua
-DragonSpeedway-Options.lua
