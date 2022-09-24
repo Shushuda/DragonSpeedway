@@ -27,6 +27,8 @@ end
 local dragonRaceSpellId, dragonRaceCountdownSpellId, dragonRacePvPCountdownSpellId = 369968, 392559, 392228
 local dragonRaceCountdownTimer = 0
 local raceInstanceID, raceCountdownInstanceId, racePvPCountdownInstanceId = nil, nil, nil
+local globalMusicVolume = C_CVar.GetCVar("Sound_MusicVolume")
+local globalMusicEnable = C_CVar.GetCVar("Sound_EnableMusic")
 
 
 -- event handler frame
@@ -63,6 +65,9 @@ function DragonSpeedway:generateDefaults()
         enableCountdownSound = true,
         enableCountdownFinalSound = true,
         enableVictorySound = true,
+        musicVolume = 100,
+        enableMusicVolume = false,
+        forceMusicSetting = false,
     }
 end
 
@@ -100,6 +105,14 @@ end
 
 function DragonSpeedway:handleDragonRaceStart()
     if self.db.enableMusic then
+        if self.db.forceMusicSetting then
+            globalMusicEnable = C_CVar.GetCVar("Sound_EnableMusic")
+            C_CVar.SetCVar("Sound_EnableMusic", 1)
+        end
+        if self.db.enableMusicVolume then
+            globalMusicVolume = C_CVar.GetCVar("Sound_MusicVolume")
+            C_CVar.SetCVar("Sound_MusicVolume", self.db.musicVolume)
+        end
         local bgm = LSM:Fetch("sound", self.db.music, noDefault)
         PlayMusic(bgm)
     end
@@ -115,6 +128,12 @@ function DragonSpeedway:handleDragonRaceEnd()
         PlaySoundFile(victory, "SFX")
     end
     StopMusic()
+    if self.db.forceMusicSetting then
+        C_CVar.SetCVar("Sound_EnableMusic", globalMusicEnable)
+    end
+    if self.db.enableMusicVolume then
+        C_CVar.SetCVar("Sound_MusicVolume", globalMusicVolume)
+    end
 end
 
 function DragonSpeedway:handleDragonRaceCountdown()
