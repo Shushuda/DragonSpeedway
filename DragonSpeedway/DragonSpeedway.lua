@@ -48,7 +48,50 @@ function DragonSpeedway:generateGameTables()
     addonVars.spyroTwoTable = spyroTwoTable
     addonVars.spyroThreeTable = spyroThreeTable
     addonVars.custom = custom
-    addonVars.sounds = sounds    
+    addonVars.sounds = sounds
+    
+    addonVars.randomGroups = {
+        ['All'] = 'All',
+        ['Spyro'] = 'Spyro',
+        ['Custom'] = 'Custom',
+    }
+    addonVars.randomGroupsKeys = {}
+    
+    local len = 0
+    for key, _ in pairs(addonVars.randomGroups) do
+        len = len + 1
+        addonVars.randomGroupsKeys[len] = key
+    end
+    
+    table.sort(addonVars.randomGroupsKeys)
+
+    addonVars.spyroEverythingTable = {}
+    addonVars.musicEverythingTable = {}
+
+    local n = 0
+    for key, value in ipairs(addonVars.spyroOneTable) do
+        n = n + 1
+        addonVars.spyroEverythingTable[n] = value
+        addonVars.musicEverythingTable[n] = value
+    end
+    
+    for key, value in ipairs(addonVars.spyroTwoTable) do
+        n = n + 1
+        addonVars.spyroEverythingTable[n] = value
+        addonVars.musicEverythingTable[n] = value
+    end
+    
+    for key, value in ipairs(addonVars.spyroThreeTable) do
+        n = n + 1
+        addonVars.spyroEverythingTable[n] = value
+        addonVars.musicEverythingTable[n] = value
+    end
+
+    for key, value in ipairs(addonVars.custom) do
+        n = n + 1
+        addonVars.musicEverythingTable[n] = value
+    end
+
 end
 
 function DragonSpeedway:generateDefaults()
@@ -68,7 +111,23 @@ function DragonSpeedway:generateDefaults()
         musicVolume = 100,
         enableMusicVolume = false,
         forceMusicSetting = false,
+        randomMusic = 'All',
+        enableRandomMusic = false,
     }
+end
+
+function DragonSpeedway:getRandomMusic()
+    local randomMusic = nil
+
+    if self.db.randomMusic == addonVars.randomGroups['Spyro'] then
+        randomMusic = addonVars.spyroEverythingTable[math.random(#addonVars.spyroEverythingTable)]
+    elseif self.db.randomMusic == addonVars.randomGroups['Custom'] then
+        randomMusic = addonVars.custom[math.random(#addonVars.custom)]
+    elseif self.db.randomMusic == addonVars.randomGroups['All'] then
+        randomMusic = addonVars.musicEverythingTable[math.random(#addonVars.musicEverythingTable)]
+    end
+
+    return randomMusic
 end
 
 
@@ -105,6 +164,8 @@ end
 
 function DragonSpeedway:handleDragonRaceStart()
     if self.db.enableMusic then
+        local bgm = nil
+
         if self.db.forceMusicSetting then
             globalMusicEnable = C_CVar.GetCVar("Sound_EnableMusic")
             C_CVar.SetCVar("Sound_EnableMusic", 1)
@@ -113,7 +174,11 @@ function DragonSpeedway:handleDragonRaceStart()
             globalMusicVolume = C_CVar.GetCVar("Sound_MusicVolume")
             C_CVar.SetCVar("Sound_MusicVolume", self.db.musicVolume)
         end
-        local bgm = LSM:Fetch("sound", self.db.music, noDefault)
+        if self.db.enableRandomMusic then
+            bgm = LSM:Fetch("sound", self:getRandomMusic(), noDefault)
+        else
+            bgm = LSM:Fetch("sound", self.db.music, noDefault)
+        end
         PlayMusic(bgm)
     end
     if self.db.enableCountdownFinalSound then
