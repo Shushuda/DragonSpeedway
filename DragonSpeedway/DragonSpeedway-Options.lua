@@ -134,6 +134,9 @@ function DragonSpeedway:InitializeOptions()
     
     self.category = Settings.RegisterCanvasLayoutCategory(self.panel, self.panel.name)
     
+    -- scrolling for the options window
+    -- blizz broke the ui so I cant do this yet lmao
+
     local title = self.panel:CreateFontString("ARTWORK", nil, "GameFontNormalLarge")
     title:SetPoint("TOPLEFT", 20, -20)
     title:SetText("DragonSpeedway")
@@ -266,6 +269,57 @@ function DragonSpeedway:InitializeOptions()
 	end)
     -- initial button state
 	victoryButton:SetChecked(self.db.enableVictorySound)
+    
+    -- slider for volume overwrite
+    
+    -- volume slider title
+    local volumeSliderTitle = self.panel:CreateFontString("ARTWORK", nil, "GameFontNormal")
+    volumeSliderTitle:SetPoint("TOPLEFT", victoryButton, 0, -45)
+    volumeSliderTitle:SetText("Music volume overwrite")
+
+    -- volume slider
+    local volumeSlider = CreateFrame("Slider", "DragonSpeedwayVolumeSlider", self.panel, "OptionsSliderTemplate")
+    volumeSlider:SetPoint("TOPLEFT", volumeSliderTitle, 0, -35)
+    volumeSlider:SetOrientation('HORIZONTAL')
+    volumeSlider:SetWidth(200)
+    -- stepping
+    volumeSlider:SetMinMaxValues(0, 100)
+    volumeSlider:SetValueStep(1)
+    volumeSlider:SetObeyStepOnDrag(true)
+    volumeSlider:SetStepsPerPage(5)
+    _G[volumeSlider:GetName().."Low"]:SetText("0%")
+	_G[volumeSlider:GetName().."High"]:SetText("100%")
+    -- initial value
+    volumeSlider:SetValue(self.db.musicVolume)
+    volumeSlider.Text:SetText(self.db.musicVolume)
+    -- action
+    volumeSlider:SetScript("OnValueChanged", function(self, value, userInput)
+        DragonSpeedway.db.musicVolume = value
+        volumeSlider.Text:SetText(value)
+	end)
+    -- render slider
+    volumeSlider:Enable()
+    volumeSlider:Show()
+    
+    -- volume ON OFF button
+    local volumeButton = CreateFrame("CheckButton", nil, self.panel, "InterfaceOptionsCheckButtonTemplate")
+	volumeButton:SetPoint("TOPRIGHT", volumeSlider, 45, 5)
+    volumeButton.Text:SetText("Enable music volume overwrite")
+	volumeButton:SetScript("OnClick", function(self)
+		DragonSpeedway.db.enableMusicVolume = self:GetChecked()
+	end)
+    -- initial button state
+	volumeButton:SetChecked(self.db.enableMusicVolume)
+    
+    -- force turn music ON button
+    local forceMusicButton = CreateFrame("CheckButton", nil, self.panel, "InterfaceOptionsCheckButtonTemplate")
+	forceMusicButton:SetPoint("TOPLEFT", volumeSlider, 0, -40)
+    forceMusicButton.Text:SetText("Enable music if disabled")
+	forceMusicButton:SetScript("OnClick", function(self)
+		DragonSpeedway.db.forceMusicSetting = self:GetChecked()
+	end)
+    -- initial button state
+	forceMusicButton:SetChecked(self.db.forceMusicSetting)
     
     
     Settings.RegisterAddOnCategory(self.category)
