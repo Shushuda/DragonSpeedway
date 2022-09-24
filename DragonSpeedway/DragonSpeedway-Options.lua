@@ -31,6 +31,9 @@ local function setValue(self, soundType, newValue, checked)
     elseif soundType == 'victory' then
         DragonSpeedway.db.victorySound = newValue
         UIDropDownMenu_SetText(victoryDropDown, DragonSpeedway.db.victorySound)
+    elseif soundType == 'random' then
+        DragonSpeedway.db.randomMusic = newValue
+        UIDropDownMenu_SetText(randomDropDown, DragonSpeedway.db.randomMusic)
     end
 
     CloseDropDownMenus()
@@ -125,6 +128,19 @@ local function victoryDropDownInit(self, level, menuList)
     end
 end
 
+local function randomDropDownInit(self, level, menuList)
+    local info = UIDropDownMenu_CreateInfo()
+
+    -- list all groups
+    info.func = setValue
+    for key, value in ipairs(addonVars.randomGroupsKeys) do
+        --print(key, value) -- debug
+        info.text = value
+        info.arg1, info.arg2, info.checked = 'random', value, value == DragonSpeedway.db.randomMusic
+        UIDropDownMenu_AddButton(info, level)
+    end
+end
+
  
 -- initialize options
 
@@ -141,21 +157,24 @@ function DragonSpeedway:InitializeOptions()
     title:SetPoint("TOPLEFT", 20, -20)
     title:SetText("DragonSpeedway")
     
-    -- countdown sound
-    local countdownTitle = self.panel:CreateFontString("ARTWORK", nil, "GameFontNormal")
-    countdownTitle:SetPoint("TOPLEFT", title, 0, -35)
-    countdownTitle:SetText("[Not Yet Implemented] Countdown sound:")
+    -- TODO: disabling countdown since it's not implemented
     
-    local countdownDropDown = CreateFrame("Frame", "countdownDropDown", self.panel, "UIDropDownMenuTemplate")
-    countdownDropDown:SetPoint("TOPLEFT", countdownTitle, -20, -20)
-    UIDropDownMenu_SetWidth(countdownDropDown, 200)
-    UIDropDownMenu_SetText(countdownDropDown, self.db.countdownSound)
+    -- -- countdown sound
+    -- local countdownTitle = self.panel:CreateFontString("ARTWORK", nil, "GameFontNormal")
+    -- countdownTitle:SetPoint("TOPLEFT", title, 0, -35)
+    -- countdownTitle:SetText("[Not Yet Implemented] Countdown sound:")
     
-    UIDropDownMenu_Initialize(countdownDropDown, countdownDropDownInit, _, 1)
+    -- local countdownDropDown = CreateFrame("Frame", "countdownDropDown", self.panel, "UIDropDownMenuTemplate")
+    -- countdownDropDown:SetPoint("TOPLEFT", countdownTitle, -20, -20)
+    -- UIDropDownMenu_SetWidth(countdownDropDown, 200)
+    -- UIDropDownMenu_SetText(countdownDropDown, self.db.countdownSound)
+    
+    -- UIDropDownMenu_Initialize(countdownDropDown, countdownDropDownInit, _, 1)
     
     -- countdown final sound
     local countdownFinalTitle = self.panel:CreateFontString("ARTWORK", nil, "GameFontNormal")
-    countdownFinalTitle:SetPoint("TOPLEFT", countdownTitle, 0, -60)
+    countdownFinalTitle:SetPoint("TOPLEFT", title, 0, -35)
+    --countdownFinalTitle:SetPoint("TOPLEFT", countdownTitle, 0, -60)
     countdownFinalTitle:SetText("Race started sound:")
     
     local countdownFinalDropDown = CreateFrame("Frame", "countdownFinalDropDown", self.panel, "UIDropDownMenuTemplate")
@@ -228,21 +247,46 @@ function DragonSpeedway:InitializeOptions()
         PlaySoundFile(cdm, "SFX")
 	end)
     
-    -- check buttons for disabling specific sounds
+    -- music randomizer
+    local randomTitle = self.panel:CreateFontString("ARTWORK", nil, "GameFontNormal")
+    randomTitle:SetPoint("TOPLEFT", victoryTitle, 0, -60)
+    randomTitle:SetText("Randomize music:")
     
-    -- countdown sound
-    local countdownButton = CreateFrame("CheckButton", nil, self.panel, "InterfaceOptionsCheckButtonTemplate")
-	countdownButton:SetPoint("TOPLEFT", victoryTitle, 0, -70)
-	countdownButton.Text:SetText("[Not Yet Implemented] Enable countdown sound")
-	countdownButton:SetScript("OnClick", function(self)
-		DragonSpeedway.db.enableCountdownSound = self:GetChecked()
+    local randomDropDown = CreateFrame("Frame", "randomDropDown", self.panel, "UIDropDownMenuTemplate")
+    randomDropDown:SetPoint("TOPLEFT", randomTitle, -20, -20)
+    UIDropDownMenu_SetWidth(randomDropDown, 200)
+    UIDropDownMenu_SetText(randomDropDown, self.db.randomMusic)
+    
+    UIDropDownMenu_Initialize(randomDropDown, randomDropDownInit, _, 1)
+    
+    -- randomizer ON OFF button
+    local randomButton = CreateFrame("CheckButton", nil, self.panel, "InterfaceOptionsCheckButtonTemplate")
+	randomButton:SetPoint("TOPRIGHT", randomDropDown, 25, -2)
+    randomButton.Text:SetText("Enable music randomizer")
+	randomButton:SetScript("OnClick", function(self)
+		DragonSpeedway.db.enableRandomMusic = self:GetChecked()
 	end)
     -- initial button state
-	countdownButton:SetChecked(self.db.enableCountdownSound)
+	randomButton:SetChecked(self.db.enableRandomMusic)
+    
+    -- check buttons for disabling specific sounds
+    
+    -- TODO: disabling countdown since it's not implemented
+    
+    -- -- countdown sound
+    -- local countdownButton = CreateFrame("CheckButton", nil, self.panel, "InterfaceOptionsCheckButtonTemplate")
+	-- countdownButton:SetPoint("TOPLEFT", randomTitle, 0, -70)
+	-- countdownButton.Text:SetText("[Not Yet Implemented] Enable countdown sound")
+	-- countdownButton:SetScript("OnClick", function(self)
+		-- DragonSpeedway.db.enableCountdownSound = self:GetChecked()
+	-- end)
+    -- -- initial button state
+	-- countdownButton:SetChecked(self.db.enableCountdownSound)
     
     -- countdown final sound
     local countdownFinalButton = CreateFrame("CheckButton", nil, self.panel, "InterfaceOptionsCheckButtonTemplate")
-	countdownFinalButton:SetPoint("TOPLEFT", countdownButton, 0, -40)
+	--countdownFinalButton:SetPoint("TOPLEFT", countdownButton, 0, -40)
+    countdownFinalButton:SetPoint("TOPLEFT", randomTitle, 0, -70)
 	countdownFinalButton.Text:SetText("Enable race started sound")
 	countdownFinalButton:SetScript("OnClick", function(self)
 		DragonSpeedway.db.enableCountdownFinalSound = self:GetChecked()
