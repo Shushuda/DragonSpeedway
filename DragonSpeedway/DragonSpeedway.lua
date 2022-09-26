@@ -29,11 +29,32 @@ local dragonRaceCountdownTimer = 0
 local raceInstanceID, raceCountdownInstanceId, racePvPCountdownInstanceId = nil, nil, nil
 local globalMusicVolume = C_CVar.GetCVar("Sound_MusicVolume")
 local globalMusicEnable = C_CVar.GetCVar("Sound_EnableMusic")
+local lastPlayedMusic = nil
+local noDefault = false
 
 
 -- event handler frame
 
 DragonSpeedway = CreateFrame("Frame")
+
+
+-- local functions
+
+local function isRandomizableTable(table)
+    if #table == 1 or #table == 0 then
+        return false
+    else
+        return true
+    end
+end
+
+local function isEmptyTable(table)
+    if #table == 0 then
+        return true
+    else
+        return false
+    end
+end
 
 
 -- class methods
@@ -117,17 +138,44 @@ function DragonSpeedway:generateDefaults()
 end
 
 function DragonSpeedway:getRandomMusic()
-    local randomMusic = nil
+    local randomMusic, isRandomizable = nil, false
 
-    if self.db.randomMusic == addonVars.randomGroups['Spyro'] then
-        randomMusic = addonVars.spyroEverythingTable[math.random(#addonVars.spyroEverythingTable)]
-    elseif self.db.randomMusic == addonVars.randomGroups['Custom'] then
-        randomMusic = addonVars.custom[math.random(#addonVars.custom)]
-    elseif self.db.randomMusic == addonVars.randomGroups['All'] then
-        randomMusic = addonVars.musicEverythingTable[math.random(#addonVars.musicEverythingTable)]
-    end
+    -- keep getting songs until it's a different one than last
+    -- unless the table is too small to pick anything new (1 or 0 elem)
+    repeat
+        randomMusic, isRandomizable = self:getRandomMusicFromGroup()
+    until(randomMusic ~= lastPlayedMusic or isRandomizable == false)
+    lastPlayedMusic = randomMusic
 
     return randomMusic
+end
+
+function DragonSpeedway:getRandomMusicFromGroup()
+    local randomMusic, isRandomizable = nil, false
+
+    if self.db.randomMusic == addonVars.randomGroups['Spyro'] then
+        randomMusic, isRandomizable = self:getRandomMusicAndAmount(addonVars.spyroEverythingTable)
+    elseif self.db.randomMusic == addonVars.randomGroups['Custom'] then
+        randomMusic, isRandomizable = self:getRandomMusicAndAmount(addonVars.custom)
+    elseif self.db.randomMusic == addonVars.randomGroups['All'] then
+        randomMusic, isRandomizable = self:getRandomMusicAndAmount(addonVars.musicEverythingTable)
+    end
+
+    return randomMusic, isRandomizable
+end
+
+-- return nil if the table has no music
+-- return a random song otherwise
+-- check if the table can be randomized (has more than 1 element)
+function DragonSpeedway:getRandomMusicAndAmount(table)
+    if isEmptyTable(table) then
+        randomMusic = nil
+    else
+        randomMusic = table[math.random(#table)]
+    end
+    isRandomizable = isRandomizableTable(table)
+
+    return randomMusic, isRandomizable
 end
 
 
