@@ -1,14 +1,18 @@
+--------------------------------------------------------------------------------
 -- global local vars
+--------------------------------------------------------------------------------
 
 local addonName, addonVars = ...
 
-
+--------------------------------------------------------------------------------
 -- libraries
+--------------------------------------------------------------------------------
 
 local LSM = LibStub("LibSharedMedia-3.0")
 
-
+--------------------------------------------------------------------------------
 -- slash commands
+--------------------------------------------------------------------------------
 
 SLASH_DRAGONSPEEDWAY1, SLASH_DRAGONSPEEDWAY2 = "/dragonspeedway", "/ds"
 
@@ -18,13 +22,16 @@ function SlashCmdList.DRAGONSPEEDWAY(msg, editBox)
         StopMusic()
     else
         Settings.OpenToCategory(DragonSpeedway.category.name)
+        Settings.OpenToCategory(DragonSpeedway.category.name)
     end
 end
 
-
+--------------------------------------------------------------------------------
 -- local vars
+--------------------------------------------------------------------------------
 
 local dragonRaceSpellId, dragonRaceCountdownSpellId, dragonRacePvPCountdownSpellId = 369968, 392559, 392228
+local dragonRidingMountList = {368899, 360954, 368901, 368896}
 local dragonRaceCountdownTimer = 0
 local raceInstanceID, raceCountdownInstanceId, racePvPCountdownInstanceId = nil, nil, nil
 local globalMusicVolume = C_CVar.GetCVar("Sound_MusicVolume")
@@ -32,13 +39,15 @@ local globalMusicEnable = C_CVar.GetCVar("Sound_EnableMusic")
 local lastPlayedMusic = nil
 local noDefault = false
 
-
+--------------------------------------------------------------------------------
 -- event handler frame
+--------------------------------------------------------------------------------
 
 DragonSpeedway = CreateFrame("Frame")
 
-
+--------------------------------------------------------------------------------
 -- local functions
+--------------------------------------------------------------------------------
 
 local function isRandomizableTable(table)
     if #table == 1 or #table == 0 then
@@ -56,8 +65,9 @@ local function isEmptyTable(table)
     end
 end
 
-
+--------------------------------------------------------------------------------
 -- class methods
+--------------------------------------------------------------------------------
 
 -- generate game group tables
 function DragonSpeedway:generateGameTables()
@@ -70,20 +80,20 @@ function DragonSpeedway:generateGameTables()
     addonVars.spyroThreeTable = spyroThreeTable
     addonVars.custom = custom
     addonVars.sounds = sounds
-    
+
     addonVars.randomGroups = {
         ['All'] = 'All',
         ['Spyro'] = 'Spyro',
         ['Custom'] = 'Custom',
     }
     addonVars.randomGroupsKeys = {}
-    
+
     local len = 0
     for key, _ in pairs(addonVars.randomGroups) do
         len = len + 1
         addonVars.randomGroupsKeys[len] = key
     end
-    
+
     table.sort(addonVars.randomGroupsKeys)
 
     addonVars.spyroEverythingTable = {}
@@ -95,13 +105,13 @@ function DragonSpeedway:generateGameTables()
         addonVars.spyroEverythingTable[n] = value
         addonVars.musicEverythingTable[n] = value
     end
-    
+
     for key, value in ipairs(addonVars.spyroTwoTable) do
         n = n + 1
         addonVars.spyroEverythingTable[n] = value
         addonVars.musicEverythingTable[n] = value
     end
-    
+
     for key, value in ipairs(addonVars.spyroThreeTable) do
         n = n + 1
         addonVars.spyroEverythingTable[n] = value
@@ -115,6 +125,7 @@ function DragonSpeedway:generateGameTables()
 
 end
 
+-- generate defaults for db
 function DragonSpeedway:generateDefaults()
     local defaultBGM, defaultFinalCDM, defaultCDM, defaultVictoryM = {}, {}, {}, {}
 
@@ -129,11 +140,26 @@ function DragonSpeedway:generateDefaults()
         enableCountdownSound = true,
         enableCountdownFinalSound = true,
         enableVictorySound = true,
+        enableSkywardAscentSound = false,
+        enableSurgeForwardSound = false,
+        enableWhirlingSurgeSound = false,
+        enableBronzeRewindSound = false,
         musicVolume = 100,
         enableMusicVolume = false,
         forceMusicSetting = false,
         randomMusic = 'All',
         enableRandomMusic = false,
+        skywardAscentSound = defaultFinalCDM,
+        surgeForwardSound = defaultFinalCDM,
+        whirlingSurgeSound = defaultFinalCDM,
+        bronzeRewindSound = defaultFinalCDM,
+        cameraDistance = 100,
+        enableCameraDistance = false,
+        musicRacesSetting = true,
+        spellRacesSetting = true,
+        cameraRacesSetting = true,
+        volumeRacesSetting = true,
+        forceMusicRacesSetting = true,
     }
 end
 
@@ -178,11 +204,12 @@ function DragonSpeedway:getRandomMusicAndAmount(table)
     return randomMusic, isRandomizable
 end
 
-
+--------------------------------------------------------------------------------
 -- event handler methods
+--------------------------------------------------------------------------------
 
 function DragonSpeedway:handleAuraUpdate(unitAuraUpdateInfo)
-    -- remember race and countdown aura instance IDs
+    -- remember race aura instance IDs
     -- and handle the sound start-up
     if unitAuraUpdateInfo.addedAuras ~= nil then
         for _, aura in ipairs(unitAuraUpdateInfo.addedAuras) do
@@ -190,14 +217,10 @@ function DragonSpeedway:handleAuraUpdate(unitAuraUpdateInfo)
                 raceInstanceID = aura.auraInstanceID
                 self:handleDragonRaceStart()
             end
-            if aura.spellId == dragonRaceCountdownSpellId or aura.spellId == dragonRacePvPCountdownSpellId then
-                raceCountdownInstanceId = aura.auraInstanceID
-                self:handleDragonRaceCountdown()
-            end
         end
-        
+
     end
-    
+
     -- check if removed auras include the remembered race instance ID
     -- and handle the sound stop
     if unitAuraUpdateInfo.removedAuraInstanceIDs ~= nil then
@@ -249,21 +272,9 @@ function DragonSpeedway:handleDragonRaceEnd()
     end
 end
 
-function DragonSpeedway:handleDragonRaceCountdown()
-    -- TODO: Implement countdown 2, 1
-    -- 2 and 1 have the same sound
-    -- find this sound x.x
-    --print("The buff was the Lightning Shield!") -- debug
-    -- debug
-    if self.db.enableCountdownSound then
-        --print("countdown sound enabled")
-    else
-        --print("countdown sound disabled")
-    end
-end
-
-
+--------------------------------------------------------------------------------
 -- event handler event methods
+--------------------------------------------------------------------------------
 
 function DragonSpeedway:OnEvent(event, ...)
 	self[event](self, event, ...)
@@ -272,7 +283,7 @@ end
 function DragonSpeedway:ADDON_LOADED(event, addOnName)
 	if addOnName == "DragonSpeedway" then
         print(addOnName, "loaded. Type '/ds' for settings or '/ds stop' for stopping the currently playing music")
-        
+
         -- initialize saved variables
         DragonSpeedwayDB = DragonSpeedwayDB or {}
         self.db = DragonSpeedwayDB
@@ -284,17 +295,17 @@ function DragonSpeedway:ADDON_LOADED(event, addOnName)
                 self.db[key] = value
             end
         end
-        
+
         -- build hashtable of sounds
         self.hashtable = LSM:HashTable("sound")
-        
+
         -- validate sounds
         if not LSM:IsValid("sound") then
             print(addOnName, "- failed music validation! Check your files!")
         end
-        
+
         self:generateGameTables()
-        
+
         -- initialize options
         self:InitializeOptions()
         self:UnregisterEvent(event)
@@ -303,20 +314,19 @@ end
 
 function DragonSpeedway:UNIT_AURA(event, ...)
     local unitTarget, unitAuraUpdateInfo = ...
-    
+
     if unitTarget ~= "player" then
         return
     end
-    
-    --print("Some buffs changed somewhere") -- debug
-    
+
     if unitAuraUpdateInfo then
         self:handleAuraUpdate(unitAuraUpdateInfo)
     end
 end
 
-
+--------------------------------------------------------------------------------
 -- register events and listen
+--------------------------------------------------------------------------------
 
 DragonSpeedway:RegisterEvent("ADDON_LOADED")
 DragonSpeedway:RegisterEvent("UNIT_AURA")
