@@ -214,7 +214,7 @@ function DragonSpeedway:InitializeMainPanel()
 
     local desc = self.panel:CreateFontString(nil, "ARTWORK", "GameFontWhiteSmall")
     desc:SetPoint("TOPLEFT", title, 1, -30)
-    desc:SetText("Lorem impsum sadnjsajkd ahjsd bhjas ahjsdbasbhjb saahjbdhj asbhjbhj")
+    desc:SetText("Main settings + race-specific toggles. Please report bugs on GitHub <3")
 
     --------------------------------
     -- randomizer header
@@ -338,7 +338,7 @@ function DragonSpeedway:InitializeMusicPanel()
 
     local desc = panelMusic:CreateFontString(nil, "ARTWORK", "GameFontWhiteSmall")
     desc:SetPoint("TOPLEFT", title, 1, -30)
-    desc:SetText("Lorem impsum sadnjsajkd ahjsd bhjas ahjsdbasbhjb saahjbdhj asbhjbhj")
+    desc:SetText("Music and race-specific sound settings. If empty menus - check your files!")
 
     --------------------------------
     -- music and sounds header
@@ -481,7 +481,7 @@ function DragonSpeedway:InitializeCameraPanel()
 
     local desc = panelCamera:CreateFontString(nil, "ARTWORK", "GameFontWhiteSmall")
     desc:SetPoint("TOPLEFT", title, 1, -30)
-    desc:SetText("Lorem impsum sadnjsajkd ahjsd bhjas ahjsdbasbhjb saahjbdhj asbhjbhj")
+    desc:SetText("Camera settings.")
 
     --------------------------------
     -- camera header
@@ -503,7 +503,7 @@ function DragonSpeedway:InitializeCameraPanel()
     -- distance slider title
     local distanceSliderTitle = panelCamera:CreateFontString(nil, "ARTWORK", "GameFontNormal")
     distanceSliderTitle:SetPoint("TOPLEFT", distanceLine, 10, -15)
-    distanceSliderTitle:SetText("Camera distance overwrite")
+    distanceSliderTitle:SetText("Camera distance overwrite (in yards)")
 
     -- distance slider
     local distanceSlider = CreateFrame("Slider", "DragonSpeedwayDistanceSlider", panelCamera, "OptionsSliderTemplate")
