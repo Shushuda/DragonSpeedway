@@ -7,7 +7,7 @@ This addon is mostly meant to be used with Spyro Flight/Speedway music and sound
 
 This addon requires the **DragonSpeedway_Music** addon to work. I've separated them into two addons as a workaround for addon managers replacing the music files during update. This way you will only want to update the main **DragonSpeedway** addon and leave **DragonSpeedway_Music** outdated. You will also add music only to the **DragonSpeedway_Music** addon. Keep in mind that **DragonSpeedway_Music** will be out of date pretty fast, but it will still work fine - just load it anyway. I won't update the TOC because this will just re-trigger this update overwrite issue.
 
-## But where's the music? The directories and ingame menus are empty! 
+## But where's the music? The directories and ingame menus are empty!
 
 For copyright reasons, I cannot distribute the addon with Spyro music, but the code is prepared to register, name, display and play the music ingame once the end user (you) adds the appropiate music files in proper directories inside the addon. Please refer to the [How to add Spyro music](#how-to-add-spyro-music) and [How to add custom music and SFX (automatic - Windows only)](#how-to-add-custom-music-and-sfx-automatic---windows-only) OR [How to add custom music and SFX (manually - all Operating Systems)](#how-to-add-custom-music-and-sfx-manually---all-operating-systems) sections for a tutorial. It's easy, I promise, I've tried to write down every single step. Contact me if you have trouble, I'll do my best to help.
 
@@ -65,9 +65,10 @@ mushroom-speedway.mp3
 6. Go inside **Sounds** directory.
 7. Go inside **Custom** directory and add your **sound** files in either **.mp3** or **.ogg** format. These files can be named however you like, just don't use special characters - I can't guarantee they will work.
 8. Go back to the addon directory - **DragonSpeedway_Music**.
-9. Run **registerFiles.bat** file.
-10. RESTART THE GAME! These files won't be visible with a simple */reload*, you need to restart the entire game client!
-11. You're done, your custom music should now be displayed in addon's settings in the game. Pick the ones you like, you can also mute certain sounds if you want to, for example, play music without any sound effects.
+9. Rename **registerFiles.bat.txt** file to **registerFiles.bat**.
+10. Run **registerFiles.bat** file.
+11. RESTART THE GAME! These files won't be visible with a simple */reload*, you need to restart the entire game client!
+12. You're done, your custom music should now be displayed in addon's settings in the game. Pick the ones you like, you can also mute certain sounds if you want to, for example, play music without any sound effects.
 
 ## How to add custom music and SFX (manually - all Operating Systems)
 
