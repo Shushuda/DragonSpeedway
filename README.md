@@ -9,7 +9,7 @@ This addon requires the **DragonSpeedway_Music** addon to work. I've separated t
 
 ## But where's the music? The directories and ingame menus are empty! 
 
-For copyright reasons, I cannot distribute the addon with Spyro music, but the code is prepared to register, name, display and play the music ingame once the end user (you) adds the appropiate music files in proper directories inside the addon. Please refer to the [How to add Spyro music](#how-to-add-spyro-music) and [How to add custom music and SFX (manually - all Operating Systems)](#how-to-add-custom-music-and-sfx-(manually-all-operating-systems)) sections for a tutorial. It's easy, I promise, I've tried to write down every single step. Contact me if you have trouble, I'll do my best to help.
+For copyright reasons, I cannot distribute the addon with Spyro music, but the code is prepared to register, name, display and play the music ingame once the end user (you) adds the appropiate music files in proper directories inside the addon. Please refer to the [How to add Spyro music](#how-to-add-spyro-music) and [How to add custom music and SFX (automatic - Windows only)](#how-to-add-custom-music-and-sfx-automatic---windows-only) OR [How to add custom music and SFX (manually - all Operating Systems)](#how-to-add-custom-music-and-sfx-manually---all-operating-systems) sections for a tutorial. It's easy, I promise, I've tried to write down every single step. Contact me if you have trouble, I'll do my best to help.
 
 ## How it works (skip ahead if you just want a step by step tutorial)
 
