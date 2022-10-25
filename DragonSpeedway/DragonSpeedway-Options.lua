@@ -14,9 +14,9 @@ local LSM = LibStub("LibSharedMedia-3.0")
 -- local lists and vars
 --------------------------------------------------------------------------------
 
-local spyroOne = "Spyro Reignited Trilogy 1"
-local spyroTwo = "Spyro Reignited Trilogy 2"
-local spyroThree = "Spyro Reignited Trilogy 3"
+local spyroOne = "Spyro 1"
+local spyroTwo = "Spyro 2"
+local spyroThree = "Spyro 3"
 
 --------------------------------------------------------------------------------
 -- local functions
@@ -245,7 +245,7 @@ function DragonSpeedway:InitializeMainPanel()
 
     -- randomizer ON OFF button
     local randomButton = CreateFrame("CheckButton", nil, self.panel, "InterfaceOptionsCheckButtonTemplate")
-	randomButton:SetPoint("TOPRIGHT", randomDropDown, 200, -1)
+	randomButton:SetPoint("TOPRIGHT", randomDropDown, 170, -1)
     randomButton.Text:SetText("Enable music randomizer")
 	randomButton:SetScript("OnClick", function(self)
 		DragonSpeedway.db.enableRandomMusic = self:GetChecked()
@@ -264,7 +264,7 @@ function DragonSpeedway:InitializeMainPanel()
 
     local volumeHeader = self.panel:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
     volumeHeader:SetPoint("TOPLEFT", volumeLine, 5, 13)
-    volumeHeader:SetText("Spell sounds")
+    volumeHeader:SetText("Volume settings")
 
     --------------------------------
     -- volume overwrite slider
@@ -537,27 +537,47 @@ function DragonSpeedway:InitializeMusicPanel()
     -- initial button state
 	victoryButton:SetChecked(self.db.enableVictorySound)
 
+
+    Settings.RegisterAddOnCategory(category_music)
+end
+
+-- sub-panel Spell Sounds
+function DragonSpeedway:InitializeSoundsPanel()
+    local panelSounds = CreateFrame("Frame")
+    panelSounds.name = "Spell Sounds"
+
+    local category_sounds = Settings.RegisterCanvasLayoutSubcategory(self.category, panelSounds, panelSounds.name)
+
+    local title = panelSounds:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+    title:SetPoint("TOPLEFT", 20, -20)
+    title:SetText("Spell Sounds")
+
+    local desc = panelSounds:CreateFontString(nil, "ARTWORK", "GameFontWhiteSmall")
+    desc:SetPoint("TOPLEFT", title, 1, -30)
+
     --------------------------------
     -- spell sounds header
     --------------------------------
-    local spellLine = panelMusic:CreateLine()
-    spellLine:SetStartPoint("TOPLEFT", panelMusic, 10, -320)
-    spellLine:SetEndPoint("TOPRIGHT", panelMusic, -20, -320)
+    local spellLine = panelSounds:CreateLine()
+    spellLine:SetStartPoint("TOPLEFT", panelSounds, 10, -100)
+    spellLine:SetEndPoint("TOPRIGHT", panelSounds, -20, -100)
     spellLine:SetColorTexture(1,1,1,0.25)
     spellLine:SetThickness(2)
 
-    local spellHeader = panelMusic:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+    local spellHeader = panelSounds:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
     spellHeader:SetPoint("TOPLEFT", spellLine, 5, 13)
     spellHeader:SetText("Spell sounds")
+
+    desc:SetText("Lorem impsum sadnjsajkd ahjsd bhjas ahjsdbasbhjb saahjbdhj asbhjbhj")
 
     --------------------------------
     -- Skyward Ascent sound
     --------------------------------
-    local skywardAscentTitle = panelMusic:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    local skywardAscentTitle = panelSounds:CreateFontString(nil, "ARTWORK", "GameFontNormal")
     skywardAscentTitle:SetPoint("TOPLEFT", spellLine, 10, -15)
     skywardAscentTitle:SetText("Skyward Ascent sound:")
 
-    local skywardAscentDropDown = CreateFrame("Frame", "skywardAscentDropDown", panelMusic, "UIDropDownMenuTemplate")
+    local skywardAscentDropDown = CreateFrame("Frame", "skywardAscentDropDown", panelSounds, "UIDropDownMenuTemplate")
     skywardAscentDropDown:SetPoint("TOPLEFT", skywardAscentTitle, -20, -20)
     UIDropDownMenu_SetWidth(skywardAscentDropDown, 200)
     UIDropDownMenu_SetText(skywardAscentDropDown, self.db.skywardAscentSound)
@@ -565,7 +585,7 @@ function DragonSpeedway:InitializeMusicPanel()
     UIDropDownMenu_Initialize(skywardAscentDropDown, skywardAscentDropDownInit, _, 1)
 
     -- Skyward Ascent sound preview button
-    local skywardAscentPlayButton = CreateFrame("Button", nil, panelMusic, "UIPanelButtonTemplate")
+    local skywardAscentPlayButton = CreateFrame("Button", nil, panelSounds, "UIPanelButtonTemplate")
 	skywardAscentPlayButton:SetPoint("TOPRIGHT", skywardAscentDropDown, 45, -3)
 	skywardAscentPlayButton:SetText("PLAY")
 	skywardAscentPlayButton:SetWidth(50)
@@ -575,7 +595,7 @@ function DragonSpeedway:InitializeMusicPanel()
 	end)
 
     -- Skyward Ascent sound enable button
-    local skywardAscentButton = CreateFrame("CheckButton", nil, panelMusic, "InterfaceOptionsCheckButtonTemplate")
+    local skywardAscentButton = CreateFrame("CheckButton", nil, panelSounds, "InterfaceOptionsCheckButtonTemplate")
 	skywardAscentButton:SetPoint("TOPRIGHT", skywardAscentDropDown, 200, -1)
 	skywardAscentButton.Text:SetText("Enable Skyward Ascent sound")
 	skywardAscentButton:SetScript("OnClick", function(self)
@@ -587,11 +607,11 @@ function DragonSpeedway:InitializeMusicPanel()
     --------------------------------
     -- Surge Forward sound
     --------------------------------
-    local surgeForwardTitle = panelMusic:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    local surgeForwardTitle = panelSounds:CreateFontString(nil, "ARTWORK", "GameFontNormal")
     surgeForwardTitle:SetPoint("TOPLEFT", skywardAscentTitle, 0, -60)
     surgeForwardTitle:SetText("Surge Forward sound:")
 
-    local surgeForwardDropDown = CreateFrame("Frame", "surgeForwardDropDown", panelMusic, "UIDropDownMenuTemplate")
+    local surgeForwardDropDown = CreateFrame("Frame", "surgeForwardDropDown", panelSounds, "UIDropDownMenuTemplate")
     surgeForwardDropDown:SetPoint("TOPLEFT", surgeForwardTitle, -20, -20)
     UIDropDownMenu_SetWidth(surgeForwardDropDown, 200)
     UIDropDownMenu_SetText(surgeForwardDropDown, self.db.surgeForwardSound)
@@ -599,7 +619,7 @@ function DragonSpeedway:InitializeMusicPanel()
     UIDropDownMenu_Initialize(surgeForwardDropDown, surgeForwardDropDownInit, _, 1)
 
     -- Surge Forward sound preview button
-    local surgeForwardPlayButton = CreateFrame("Button", nil, panelMusic, "UIPanelButtonTemplate")
+    local surgeForwardPlayButton = CreateFrame("Button", nil, panelSounds, "UIPanelButtonTemplate")
 	surgeForwardPlayButton:SetPoint("TOPRIGHT", surgeForwardDropDown, 45, -3)
 	surgeForwardPlayButton:SetText("PLAY")
 	surgeForwardPlayButton:SetWidth(50)
@@ -609,7 +629,7 @@ function DragonSpeedway:InitializeMusicPanel()
 	end)
 
     -- Surge Forward sound enable button
-    local surgeForwardButton = CreateFrame("CheckButton", nil, panelMusic, "InterfaceOptionsCheckButtonTemplate")
+    local surgeForwardButton = CreateFrame("CheckButton", nil, panelSounds, "InterfaceOptionsCheckButtonTemplate")
 	surgeForwardButton:SetPoint("TOPRIGHT", surgeForwardDropDown, 200, -1)
 	surgeForwardButton.Text:SetText("Enable Surge Forward sound")
 	surgeForwardButton:SetScript("OnClick", function(self)
@@ -621,11 +641,11 @@ function DragonSpeedway:InitializeMusicPanel()
     --------------------------------
     -- Whirling Surge sound
     --------------------------------
-    local whirlingSurgeTitle = panelMusic:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    local whirlingSurgeTitle = panelSounds:CreateFontString(nil, "ARTWORK", "GameFontNormal")
     whirlingSurgeTitle:SetPoint("TOPLEFT", surgeForwardTitle, 0, -60)
     whirlingSurgeTitle:SetText("Whirling Surge sound:")
 
-    local whirlingSurgeDropDown = CreateFrame("Frame", "whirlingSurgeDropDown", panelMusic, "UIDropDownMenuTemplate")
+    local whirlingSurgeDropDown = CreateFrame("Frame", "whirlingSurgeDropDown", panelSounds, "UIDropDownMenuTemplate")
     whirlingSurgeDropDown:SetPoint("TOPLEFT", whirlingSurgeTitle, -20, -20)
     UIDropDownMenu_SetWidth(whirlingSurgeDropDown, 200)
     UIDropDownMenu_SetText(whirlingSurgeDropDown, self.db.whirlingSurgeSound)
@@ -633,7 +653,7 @@ function DragonSpeedway:InitializeMusicPanel()
     UIDropDownMenu_Initialize(whirlingSurgeDropDown, whirlingSurgeDropDownInit, _, 1)
 
     -- Whirling Surge sound preview button
-    local whirlingSurgePlayButton = CreateFrame("Button", nil, panelMusic, "UIPanelButtonTemplate")
+    local whirlingSurgePlayButton = CreateFrame("Button", nil, panelSounds, "UIPanelButtonTemplate")
 	whirlingSurgePlayButton:SetPoint("TOPRIGHT", whirlingSurgeDropDown, 45, -3)
 	whirlingSurgePlayButton:SetText("PLAY")
 	whirlingSurgePlayButton:SetWidth(50)
@@ -643,7 +663,7 @@ function DragonSpeedway:InitializeMusicPanel()
 	end)
 
     -- Whirling Surge sound enable button
-    local whirlingSurgeButton = CreateFrame("CheckButton", nil, panelMusic, "InterfaceOptionsCheckButtonTemplate")
+    local whirlingSurgeButton = CreateFrame("CheckButton", nil, panelSounds, "InterfaceOptionsCheckButtonTemplate")
 	whirlingSurgeButton:SetPoint("TOPRIGHT", whirlingSurgeDropDown, 200, -1)
 	whirlingSurgeButton.Text:SetText("Enable Whirling Surge sound")
 	whirlingSurgeButton:SetScript("OnClick", function(self)
@@ -655,11 +675,11 @@ function DragonSpeedway:InitializeMusicPanel()
     --------------------------------
     -- Bronze Rewind sound
     --------------------------------
-    local bronzeRewindTitle = panelMusic:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    local bronzeRewindTitle = panelSounds:CreateFontString(nil, "ARTWORK", "GameFontNormal")
     bronzeRewindTitle:SetPoint("TOPLEFT", whirlingSurgeTitle, 0, -60)
     bronzeRewindTitle:SetText("Bronze Rewind sound:")
 
-    local bronzeRewindDropDown = CreateFrame("Frame", "bronzeRewindDropDown", panelMusic, "UIDropDownMenuTemplate")
+    local bronzeRewindDropDown = CreateFrame("Frame", "bronzeRewindDropDown", panelSounds, "UIDropDownMenuTemplate")
     bronzeRewindDropDown:SetPoint("TOPLEFT", bronzeRewindTitle, -20, -20)
     UIDropDownMenu_SetWidth(bronzeRewindDropDown, 200)
     UIDropDownMenu_SetText(bronzeRewindDropDown, self.db.bronzeRewindSound)
@@ -667,7 +687,7 @@ function DragonSpeedway:InitializeMusicPanel()
     UIDropDownMenu_Initialize(bronzeRewindDropDown, bronzeRewindDropDownInit, _, 1)
 
     -- Bronze Rewind sound preview button
-    local bronzeRewindPlayButton = CreateFrame("Button", nil, panelMusic, "UIPanelButtonTemplate")
+    local bronzeRewindPlayButton = CreateFrame("Button", nil, panelSounds, "UIPanelButtonTemplate")
 	bronzeRewindPlayButton:SetPoint("TOPRIGHT", bronzeRewindDropDown, 45, -3)
 	bronzeRewindPlayButton:SetText("PLAY")
 	bronzeRewindPlayButton:SetWidth(50)
@@ -677,7 +697,7 @@ function DragonSpeedway:InitializeMusicPanel()
 	end)
 
     -- Bronze Rewind sound enable button
-    local bronzeRewindButton = CreateFrame("CheckButton", nil, panelMusic, "InterfaceOptionsCheckButtonTemplate")
+    local bronzeRewindButton = CreateFrame("CheckButton", nil, panelSounds, "InterfaceOptionsCheckButtonTemplate")
 	bronzeRewindButton:SetPoint("TOPRIGHT", bronzeRewindDropDown, 200, -1)
 	bronzeRewindButton.Text:SetText("Enable Bronze Rewind sound")
 	bronzeRewindButton:SetScript("OnClick", function(self)
@@ -687,7 +707,7 @@ function DragonSpeedway:InitializeMusicPanel()
 	bronzeRewindButton:SetChecked(self.db.enableBronzeRewindSound)
 
 
-    Settings.RegisterAddOnCategory(category_music)
+    Settings.RegisterAddOnCategory(category_sounds)
 end
 
 -- sub-panel camera
@@ -772,5 +792,6 @@ end
 function DragonSpeedway:InitializeOptions()
     self:InitializeMainPanel()
     self:InitializeMusicPanel()
+    self:InitializeSoundsPanel()
     self:InitializeCameraPanel()
 end
