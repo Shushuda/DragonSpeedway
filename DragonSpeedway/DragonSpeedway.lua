@@ -30,14 +30,34 @@ end
 -- local vars
 --------------------------------------------------------------------------------
 
-local dragonRaceSpellId, dragonRaceCountdownSpellId, dragonRacePvPCountdownSpellId = 369968, 392559, 392228
-local dragonRidingMountList = {368899, 360954, 368901, 368896}
+local dragonRaceSpellId, dragonRacePvPCountdownSpellId = 369968, 392228
 local dragonRaceCountdownTimer = 0
 local raceInstanceID, raceCountdownInstanceId, racePvPCountdownInstanceId = nil, nil, nil
 local globalMusicVolume = C_CVar.GetCVar("Sound_MusicVolume")
 local globalMusicEnable = C_CVar.GetCVar("Sound_EnableMusic")
+local globalCameraDistance = GetCameraZoom()
 local lastPlayedMusic = nil
 local noDefault = false
+
+local dragonRidingMountList = {
+    [368899] = true, [360954] = true, [368901] = true, [368896] = true
+}
+
+local dragonRaceCountdownSpellIds = {
+    [375810] = true, [375261] = true, [392228] = true, [369893] = true, [375236] = true,
+    [378430] = true, [386331] = true, [370014] = true, [370326] = true, [370329] = true,
+    [370426] = true, [372239] = true, [373495] = true, [373571] = true, [373578] = true,
+    [373851] = true, [373857] = true, [374088] = true, [374091] = true, [374143] = true,
+    [374144] = true, [374182] = true, [374183] = true, [374244] = true, [374246] = true,
+    [374412] = true, [374414] = true, [374592] = true, [374593] = true, [374825] = true,
+    [375261] = true, [375262] = true, [375356] = true, [375358] = true, [375477] = true,
+    [375479] = true, [376062] = true, [376195] = true, [376366] = true, [376805] = true,
+    [376817] = true, [377025] = true, [377026] = true, [377692] = true, [377745] = true,
+    [378415] = true, [378753] = true, [378775] = true, [379036] = true, [379397] = true,
+    [381978] = true, [382000] = true, [382632] = true, [382652] = true, [382717] = true,
+    [382755] = true, [383473] = true, [383474] = true, [383596] = true, [383597] = true,
+    [386211] = true, [387548] = true, [387563] = true
+}
 
 --------------------------------------------------------------------------------
 -- event handler frame
@@ -63,6 +83,10 @@ local function isEmptyTable(table)
     else
         return false
     end
+end
+
+local function tableContains(table, key)
+    return table[key] ~= nil
 end
 
 --------------------------------------------------------------------------------
@@ -204,6 +228,16 @@ function DragonSpeedway:getRandomMusicAndAmount(table)
     return randomMusic, isRandomizable
 end
 
+function DragonSpeedway:setCameraDistance(level)
+    local zoom = GetCameraZoom()
+    local delta = zoom - level
+    if delta > 0 then
+        CameraZoomIn(delta)
+    else
+        CameraZoomOut(-delta)
+    end
+end
+
 --------------------------------------------------------------------------------
 -- event handler methods
 --------------------------------------------------------------------------------
@@ -216,6 +250,8 @@ function DragonSpeedway:handleAuraUpdate(unitAuraUpdateInfo)
             if aura.spellId == dragonRaceSpellId then
                 raceInstanceID = aura.auraInstanceID
                 self:handleDragonRaceStart()
+            elseif tableContains(dragonRaceCountdownSpellIds, aura.spellId) then
+                self:handleDragonRaceCountdown()
             end
         end
 
@@ -258,6 +294,13 @@ function DragonSpeedway:handleDragonRaceStart()
     end
 end
 
+function DragonSpeedway:handleDragonRaceCountdown()
+    globalCameraDistance = GetCameraZoom()
+    if self.db.enableCameraDistance then
+        self:setCameraDistance(self.db.cameraDistance)
+    end
+end
+
 function DragonSpeedway:handleDragonRaceEnd()
     if self.db.enableVictorySound then
         local victory = LSM:Fetch("sound", self.db.victorySound, noDefault)
@@ -269,6 +312,9 @@ function DragonSpeedway:handleDragonRaceEnd()
     end
     if self.db.enableMusicVolume then
         C_CVar.SetCVar("Sound_MusicVolume", globalMusicVolume)
+    end
+    if self.db.enableCameraDistance then
+        self:setCameraDistance(globalCameraDistance)
     end
 end
 
