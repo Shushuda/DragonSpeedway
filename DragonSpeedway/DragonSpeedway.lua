@@ -21,8 +21,10 @@ function SlashCmdList.DRAGONSPEEDWAY(msg, editBox)
         print("DragonSpeedway - stopping the music")
         StopMusic()
     else
-        Settings.OpenToCategory(DragonSpeedway.category.name)
-        Settings.OpenToCategory(DragonSpeedway.category.name)
+        InterfaceOptionsFrame_OpenToCategory(DragonSpeedway.category)
+        InterfaceOptionsFrame_OpenToCategory(DragonSpeedway.category)
+        --Settings.OpenToCategory(DragonSpeedway.category.name)
+        --Settings.OpenToCategory(DragonSpeedway.category.name)
     end
 end
 
@@ -35,7 +37,6 @@ local dragonRaceCountdownTimer = 0
 local raceInstanceID, raceCountdownInstanceId, racePvPCountdownInstanceId = nil, nil, nil
 local globalMusicVolume = C_CVar.GetCVar("Sound_MusicVolume")
 local globalMusicEnable = C_CVar.GetCVar("Sound_EnableMusic")
-local globalCameraDistance = GetCameraZoom()
 local lastPlayedMusic = nil
 local noDefault = false
 
@@ -179,11 +180,14 @@ function DragonSpeedway:generateDefaults()
         bronzeRewindSound = defaultFinalCDM,
         cameraDistance = 100,
         enableCameraDistance = false,
+        enableMountCameraDistance = false,
         musicRacesSetting = true,
         spellRacesSetting = true,
         cameraRacesSetting = true,
         volumeRacesSetting = true,
         forceMusicRacesSetting = true,
+        globalCameraDistance = 0,
+        mountInstanceID = nil,
     }
 end
 
@@ -238,6 +242,23 @@ function DragonSpeedway:setCameraDistance(level)
     end
 end
 
+function DragonSpeedway:reapplyMountInstanceID()
+    local mountAura = nil
+    for spellID, _ in pairs(dragonRidingMountList) do
+        mountAura = C_UnitAuras.GetPlayerAuraBySpellID(spellID)
+        if mountAura then break end
+    end
+    if mountAura then
+        self.db.mountInstanceID = mountAura.auraInstanceID
+        return true
+    else
+        -- something went wrong, there's instance ID but no spell ID
+        -- clean it just in case
+        self.db.mountInstanceID = nil
+        return false
+    end
+end
+
 --------------------------------------------------------------------------------
 -- event handler methods
 --------------------------------------------------------------------------------
@@ -252,6 +273,14 @@ function DragonSpeedway:handleAuraUpdate(unitAuraUpdateInfo)
                 self:handleDragonRaceStart()
             elseif tableContains(dragonRaceCountdownSpellIds, aura.spellId) then
                 self:handleDragonRaceCountdown()
+            elseif tableContains(dragonRidingMountList, aura.spellId) then
+                -- failsafe in case game registers aura on login
+                local skipZoom = false
+                if self.db.mountInstanceID then
+                    skipZoom = true
+                end
+                self.db.mountInstanceID = aura.auraInstanceID
+                self:handleDragonridingMount(skipZoom)
             end
         end
 
@@ -264,6 +293,9 @@ function DragonSpeedway:handleAuraUpdate(unitAuraUpdateInfo)
             if auraInstanceID == raceInstanceID then
                 raceInstanceID = nil
                 self:handleDragonRaceEnd()
+            elseif auraInstanceID == self.db.mountInstanceID then
+                self.db.mountInstanceID = nil
+                self:handleDragonridingDismount()
             end
         end
     end
@@ -295,8 +327,8 @@ function DragonSpeedway:handleDragonRaceStart()
 end
 
 function DragonSpeedway:handleDragonRaceCountdown()
-    globalCameraDistance = GetCameraZoom()
     if self.db.enableCameraDistance then
+        self.db.globalCameraDistance = GetCameraZoom()
         self:setCameraDistance(self.db.cameraDistance)
     end
 end
@@ -314,7 +346,28 @@ function DragonSpeedway:handleDragonRaceEnd()
         C_CVar.SetCVar("Sound_MusicVolume", globalMusicVolume)
     end
     if self.db.enableCameraDistance then
-        self:setCameraDistance(globalCameraDistance)
+        self:setCameraDistance(self.db.globalCameraDistance)
+    end
+end
+
+function DragonSpeedway:handleDragonridingMount(skipZoom)
+    if self.db.enableMountCameraDistance then
+        if not skipZoom then
+            self.db.globalCameraDistance = GetCameraZoom()
+        end
+        self:setCameraDistance(self.db.cameraDistance)
+    end
+end
+
+function DragonSpeedway:handleDragonridingDismount()
+    if self.db.enableMountCameraDistance then
+        self:setCameraDistance(self.db.globalCameraDistance)
+    end
+end
+
+function DragonSpeedway:reapplyDismount()
+    if not self:reapplyMountInstanceID() then
+        self:handleDragonridingDismount()
     end
 end
 
@@ -354,6 +407,7 @@ function DragonSpeedway:ADDON_LOADED(event, addOnName)
 
         -- initialize options
         self:InitializeOptions()
+
         self:UnregisterEvent(event)
     end
 end
@@ -370,12 +424,23 @@ function DragonSpeedway:UNIT_AURA(event, ...)
     end
 end
 
+-- loading into places while mounted can confuse aura events
+-- workaround by manually checking for mount status on each loading screen
+-- this also takes care of login issue with losing spell instance IDs
+function DragonSpeedway:LOADING_SCREEN_DISABLED(event, ...)
+    if self.db.mountInstanceID then
+        -- schedule in 1sec to make sure it grabs the ID
+        addonVars.SchedulerLib:ScheduleUniqueTask(1, self.reapplyDismount, self)
+    end
+end
+
 --------------------------------------------------------------------------------
 -- register events and listen
 --------------------------------------------------------------------------------
 
 DragonSpeedway:RegisterEvent("ADDON_LOADED")
 DragonSpeedway:RegisterEvent("UNIT_AURA")
+DragonSpeedway:RegisterEvent("LOADING_SCREEN_DISABLED")
 
 
 DragonSpeedway:SetScript("OnEvent", DragonSpeedway.OnEvent)
