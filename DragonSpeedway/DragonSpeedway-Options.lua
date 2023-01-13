@@ -321,6 +321,31 @@ function DragonSpeedway:InitializeMainPanel()
     -- initial button state
 	forceMusicButton:SetChecked(self.db.forceMusicSetting)
 
+    --------------------------------
+    -- race settings header
+    --------------------------------
+    local settingsLine = self.panel:CreateLine()
+    settingsLine:SetStartPoint("TOPLEFT", self.panel, 10, -364)
+    settingsLine:SetEndPoint("TOPRIGHT", self.panel, -20, -364)
+    settingsLine:SetColorTexture(1,1,1,0.25)
+    settingsLine:SetThickness(2)
+
+    local settingsHeader = self.panel:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+    settingsHeader:SetPoint("TOPLEFT", settingsLine, 5, 13)
+    settingsHeader:SetText("Other settings")
+
+    --------------------------------
+    -- play default dragonriding music outside of races button
+    --------------------------------
+    local defMusicRacesButton = CreateFrame("CheckButton", nil, self.panel, "InterfaceOptionsCheckButtonTemplate")
+	defMusicRacesButton:SetPoint("TOPLEFT", settingsLine, 10, -15)
+    defMusicRacesButton.Text:SetText("Play default Dragonriding music outside of races")
+	defMusicRacesButton:SetScript("OnClick", function(self)
+		DragonSpeedway.db.defMusicRacesSetting = self:GetChecked()
+	end)
+    -- initial button state
+	defMusicRacesButton:SetChecked(self.db.defMusicRacesSetting)
+
 
     Settings.RegisterAddOnCategory(self.category)
 end
@@ -529,25 +554,25 @@ function DragonSpeedway:InitializeCameraPanel()
     distanceSlider:Enable()
     distanceSlider:Show()
 
-    -- race distance ON OFF button
-    local distanceButton = CreateFrame("CheckButton", nil, panelCamera, "InterfaceOptionsCheckButtonTemplate")
-	distanceButton:SetPoint("TOPRIGHT", distanceSlider, 200, 5)
-    distanceButton.Text:SetText("Enable camera distance overwrite")
-	distanceButton:SetScript("OnClick", function(self)
-		DragonSpeedway.db.enableCameraDistance = self:GetChecked()
-	end)
-    -- initial button state
-	distanceButton:SetChecked(self.db.enableCameraDistance)
-
     -- mount distance ON OFF button
     local distanceMountButton = CreateFrame("CheckButton", nil, panelCamera, "InterfaceOptionsCheckButtonTemplate")
-    distanceMountButton:SetPoint("TOPRIGHT", distanceButton, 0, -30)
-    distanceMountButton.Text:SetText("Enable camera distance overwrite on mount up")
+    distanceMountButton:SetPoint("TOPRIGHT", distanceSlider, 200, 5)
+    distanceMountButton.Text:SetText("Enable camera distance overwrite")
     distanceMountButton:SetScript("OnClick", function(self)
         DragonSpeedway.db.enableMountCameraDistance = self:GetChecked()
     end)
     -- initial button state
     distanceMountButton:SetChecked(self.db.enableMountCameraDistance)
+
+    -- race distance ON OFF button
+    local distanceButton = CreateFrame("CheckButton", nil, panelCamera, "InterfaceOptionsCheckButtonTemplate")
+	distanceButton:SetPoint("TOPRIGHT", distanceMountButton, 30, -30)
+    distanceButton.Text:SetText("Only in races")
+	distanceButton:SetScript("OnClick", function(self)
+		DragonSpeedway.db.enableCameraDistance = self:GetChecked()
+	end)
+    -- initial button state
+	distanceButton:SetChecked(self.db.enableCameraDistance)
 
 
     Settings.RegisterAddOnCategory(category_camera)

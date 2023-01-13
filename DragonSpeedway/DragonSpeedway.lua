@@ -188,6 +188,7 @@ function DragonSpeedway:generateDefaults()
         forceMusicRacesSetting = true,
         globalCameraDistance = 0,
         mountInstanceID = nil,
+        defMusicRacesSetting = false,
     }
 end
 
@@ -239,23 +240,6 @@ function DragonSpeedway:setCameraDistance(level)
         CameraZoomIn(delta)
     else
         CameraZoomOut(-delta)
-    end
-end
-
-function DragonSpeedway:reapplyMountInstanceID()
-    local mountAura = nil
-    for spellID, _ in pairs(dragonRidingMountList) do
-        mountAura = C_UnitAuras.GetPlayerAuraBySpellID(spellID)
-        if mountAura then break end
-    end
-    if mountAura then
-        self.db.mountInstanceID = mountAura.auraInstanceID
-        return true
-    else
-        -- something went wrong, there's instance ID but no spell ID
-        -- clean it just in case
-        self.db.mountInstanceID = nil
-        return false
     end
 end
 
@@ -348,26 +332,55 @@ function DragonSpeedway:handleDragonRaceEnd()
     if self.db.enableCameraDistance then
         self:setCameraDistance(self.db.globalCameraDistance)
     end
+    if self.db.defMusicRacesSetting then
+        -- default dragonriding music
+        -- sound/music/dragonflight/mus_100_dragonrace_h.mp3
+        PlayMusic(4887933)
+    end
 end
 
 function DragonSpeedway:handleDragonridingMount(skipZoom)
-    if self.db.enableMountCameraDistance then
+    if self.db.enableMountCameraDistance
+    and not self.db.enableCameraDistance then
         if not skipZoom then
             self.db.globalCameraDistance = GetCameraZoom()
         end
         self:setCameraDistance(self.db.cameraDistance)
     end
-end
-
-function DragonSpeedway:handleDragonridingDismount()
-    if self.db.enableMountCameraDistance then
-        self:setCameraDistance(self.db.globalCameraDistance)
+    if self.db.defMusicRacesSetting then
+        -- default dragonriding music
+        -- sound/music/dragonflight/mus_100_dragonrace_h.mp3
+        PlayMusic(4887933)
     end
 end
 
-function DragonSpeedway:reapplyDismount()
-    if not self:reapplyMountInstanceID() then
-        self:handleDragonridingDismount()
+function DragonSpeedway:handleDragonridingDismount()
+    if self.db.enableMountCameraDistance
+    and not self.db.enableCameraDistance then
+        self:setCameraDistance(self.db.globalCameraDistance)
+    end
+    StopMusic()
+end
+
+function DragonSpeedway:reapplyMountDismount()
+    local mountAura = nil
+    for spellID, _ in pairs(dragonRidingMountList) do
+        mountAura = C_UnitAuras.GetPlayerAuraBySpellID(spellID)
+        if mountAura then break end
+    end
+    if mountAura then
+        self.db.mountInstanceID = mountAura.auraInstanceID
+        self:handleDragonridingMount(true)
+    else
+        -- player is not mounted
+        if self.db.mountInstanceID then
+            -- but there is an instance ID
+            -- clean it and reapply dismount camera
+            self.db.mountInstanceID = nil
+            self:handleDragonridingDismount()
+        end
+        -- no instance ID -> no mount aura means player ported from unmounted
+        -- into unmounted state, so nothing to do here
     end
 end
 
@@ -425,13 +438,12 @@ function DragonSpeedway:UNIT_AURA(event, ...)
 end
 
 -- loading into places while mounted can confuse aura events
+-- happens also when leaving instances into a mounted state
 -- workaround by manually checking for mount status on each loading screen
 -- this also takes care of login issue with losing spell instance IDs
 function DragonSpeedway:LOADING_SCREEN_DISABLED(event, ...)
-    if self.db.mountInstanceID then
-        -- schedule in 1sec to make sure it grabs the ID
-        addonVars.SchedulerLib:ScheduleUniqueTask(1, self.reapplyDismount, self)
-    end
+    -- schedule in 2sec to make sure it grabs the ID
+    addonVars.SchedulerLib:ScheduleUniqueTask(2, self.reapplyMountDismount, self)
 end
 
 --------------------------------------------------------------------------------
