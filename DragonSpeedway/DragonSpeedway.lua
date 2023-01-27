@@ -34,7 +34,7 @@ end
 
 local dragonRaceSpellId, dragonRacePvPCountdownSpellId = 369968, 392228
 local dragonRaceCountdownTimer = 0
-local raceInstanceID, raceCountdownInstanceId, racePvPCountdownInstanceId = nil, nil, nil
+local raceInstanceID, raceCountdownInstanceID, racePvPCountdownInstanceID = nil, nil, nil
 local globalMusicVolume = C_CVar.GetCVar("Sound_MusicVolume")
 local globalMusicEnable = C_CVar.GetCVar("Sound_EnableMusic")
 local lastPlayedMusic = nil
@@ -57,7 +57,12 @@ local dragonRaceCountdownSpellIds = {
     [378415] = true, [378753] = true, [378775] = true, [379036] = true, [379397] = true,
     [381978] = true, [382000] = true, [382632] = true, [382652] = true, [382717] = true,
     [382755] = true, [383473] = true, [383474] = true, [383596] = true, [383597] = true,
-    [386211] = true, [387548] = true, [387563] = true
+    [386211] = true, [387548] = true, [387563] = true, [395088] = true, [396688] = true,
+    [396710] = true, [396712] = true, [396714] = true, [396934] = true, [396943] = true,
+    [396960] = true, [396977] = true, [396984] = true, [396997] = true, [397050] = true,
+    [397129] = true, [397131] = true, [397141] = true, [397143] = true, [397147] = true,
+    [397151] = true, [397155] = true, [397157] = true, [397175] = true, [397179] = true,
+    [397182] = true, [397187] = true, [397189] = true
 }
 
 --------------------------------------------------------------------------------
@@ -254,9 +259,15 @@ function DragonSpeedway:handleAuraUpdate(unitAuraUpdateInfo)
         for _, aura in ipairs(unitAuraUpdateInfo.addedAuras) do
             if aura.spellId == dragonRaceSpellId then
                 raceInstanceID = aura.auraInstanceID
-                self:handleDragonRaceStart()
             elseif tableContains(dragonRaceCountdownSpellIds, aura.spellId) then
-                self:handleDragonRaceCountdown()
+                raceCountdownInstanceID = aura.auraInstanceID
+                -- we don't need to set the camera distance again since
+                -- the race is technically still ongoing
+                if raceInstanceID then
+                    self:handleDragonRaceRestart()
+                else
+                    self:handleDragonRaceCountdown()
+                end
             elseif tableContains(dragonRidingMountList, aura.spellId) then
                 -- failsafe in case game registers aura on login
                 local skipZoom = false
@@ -277,6 +288,9 @@ function DragonSpeedway:handleAuraUpdate(unitAuraUpdateInfo)
             if auraInstanceID == raceInstanceID then
                 raceInstanceID = nil
                 self:handleDragonRaceEnd()
+            elseif auraInstanceID == raceCountdownInstanceID then
+                raceCountdownInstanceID = nil
+                self:handleDragonRaceStart()
             elseif auraInstanceID == self.db.mountInstanceID then
                 self.db.mountInstanceID = nil
                 self:handleDragonridingDismount()
@@ -337,6 +351,10 @@ function DragonSpeedway:handleDragonRaceEnd()
         -- sound/music/dragonflight/mus_100_dragonrace_h.mp3
         PlayMusic(4887933)
     end
+end
+
+function DragonSpeedway:handleDragonRaceRestart()
+    StopMusic()
 end
 
 function DragonSpeedway:handleDragonridingMount(skipZoom)
