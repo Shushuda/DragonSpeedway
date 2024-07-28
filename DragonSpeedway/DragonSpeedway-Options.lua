@@ -206,7 +206,8 @@ function DragonSpeedway:InitializeMainPanel()
     self.panel = CreateFrame("Frame")
     self.panel.name = "DragonSpeedway"
 
-    self.category = Settings.RegisterCanvasLayoutCategory(self.panel, self.panel.name)
+    self.category = Settings.RegisterCanvasLayoutCategory(self.panel, self.panel.name, self.panel.name)
+    self.category.ID = self.panel.name
 
     local title = self.panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
     title:SetPoint("TOPLEFT", 20, -20)
