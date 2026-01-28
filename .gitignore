@@ -1,0 +1,30 @@
+# Shell configs
+.bash_profile
+.bashrc
+.profile
+.zprofile
+.zshrc
+
+# Git config
+.gitconfig
+
+# IDE
+.idea
+.vscode
+
+# Claude Code
+.claude/
+.mcp.json
+
+# Ripgrep
+.ripgreprc
+
+# OS
+.DS_Store
+
+# Backup files
+*~
+*.bak
+
+# The batch file (template is .bat.txt)
+registerFiles.bat
