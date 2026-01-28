@@ -1,4 +1,4 @@
-## Interface: 100002
+## Interface: 120000
 ## Version: 1.2.0
 ## Title: DragonSpeedway Music Handler
 ## Notes: Mandatory plugin for handling music for DragonSpeedway addon

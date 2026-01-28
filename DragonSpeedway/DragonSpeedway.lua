@@ -337,6 +337,11 @@ end
 --------------------------------------------------------------------------------
 
 function DragonSpeedway:handleAuraUpdate(unitAuraUpdateInfo)
+    -- bail out in restricted contexts where aura spellId access is blocked
+    if InCombatLockdown() or IsInInstance() then
+        return
+    end
+
     -- remember race aura instance IDs
     -- and handle the sound start-up
     if unitAuraUpdateInfo.addedAuras ~= nil then
