@@ -6,6 +6,7 @@
 .zshrc
 
 # Git config
+.gitmodules
 .gitconfig
 
 # IDE
@@ -28,3 +29,6 @@
 
 # The batch file (template is .bat.txt)
 registerFiles.bat
+
+# WoW UI source (documentation reference only)
+wow-ui-source/
