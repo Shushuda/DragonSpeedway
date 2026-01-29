@@ -80,3 +80,42 @@ LSM:Register("sound", "Display Name", [[Interface\Addons\DragonSpeedway_Music\Mu
 ## WoW Interface Version
 
 Currently targets retail WoW (Interface version in .toc files). Update TOC `## Interface:` value when WoW patches break compatibility.
+
+## Reference Documentation
+
+The `wow-ui-source/` directory contains the latest WoW UI source code mirrored from Blizzard. This is **documentation only** - use it as a reference for WoW's Lua API, frame templates, and UI patterns. Do not modify files in this directory or treat them as part of this addon project.
+
+## Web Resources
+
+For WoW API lookups, prefer `wow-ui-source/` for source code reference. For wiki documentation, restrict web searches to `warcraft.wiki.gg`.
+
+## WoW Midnight (12.0) Secret Values System
+
+### When Aura Data Becomes Secret
+| Context | Aura Data |
+|---------|-----------|
+| Overworld + no combat | Accessible |
+| Overworld + combat | **Secret** |
+| Instanced content (delves, dungeons, raids, arenas, BGs) | **Secret** (regardless of combat) |
+
+### Detection APIs
+- `issecretvalue(val)` - Returns true if value is a secret handle
+- `canaccessvalue(val)` - Returns true if current execution can read the value
+- `scrubsecretvalues(...)` - Returns args with secret values replaced by nil
+
+### Safety Pattern
+Always check before comparing:
+```lua
+if not issecretvalue(aura.spellId) and aura.spellId == TARGET_SPELL_ID then
+    -- safe to use
+end
+```
+
+Performing math, comparison, or string conversion on a secret value triggers an unrecoverable Lua error.
+
+### Private Auras vs Secret Values
+- **Private auras**: Boss mechanics marked as opaque. Always private, older system (pre-Midnight). Designed to block DBM/WeakAuras from tracking certain encounters.
+- **Secret values**: Dynamic system added in Midnight. Aura data becomes secret based on context (combat/instance state). Same aura is accessible in overworld, secret in dungeon.
+
+### Whitelist
+Blizzard whitelists specific spells via bluepost announcements. No API to query the whitelist. Whitelisted spells return normal values in all contexts. Can change per patch.
