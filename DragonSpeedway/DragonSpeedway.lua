@@ -37,6 +37,48 @@ local globalMusicEnable = C_CVar.GetCVar("Sound_EnableMusic")
 local lastPlayedMusic = nil
 local noDefault = false
 
+local defaults = {
+    profile = {
+        -- User preferences (switchable between profiles)
+        -- Sound defaults set to nil, populated after LSM loads
+        music = nil,
+        countdownSound = nil,
+        countdownFinalSound = nil,
+        victorySound = nil,
+        enableMusic = true,
+        enableCountdownSound = true,
+        enableCountdownFinalSound = true,
+        enableVictorySound = true,
+        enableSkywardAscentSound = false,
+        enableSurgeForwardSound = false,
+        enableWhirlingSurgeSound = false,
+        enableBronzeRewindSound = false,
+        musicVolume = 100,
+        enableMusicVolume = false,
+        forceMusicSetting = false,
+        randomMusic = 'All',
+        enableRandomMusic = false,
+        skywardAscentSound = nil,
+        surgeForwardSound = nil,
+        whirlingSurgeSound = nil,
+        bronzeRewindSound = nil,
+        cameraDistance = 39,
+        enableCameraDistance = false,
+        enableMountCameraDistance = false,
+        musicRacesSetting = true,
+        spellRacesSetting = true,
+        cameraRacesSetting = true,
+        volumeRacesSetting = true,
+        forceMusicRacesSetting = true,
+        defMusicRacesSetting = false,
+    },
+    char = {
+        -- Per-character state (not switchable)
+        globalCameraDistance = 0,
+        isMountedWithGlide = false,
+    },
+}
+
 local dragonRaceCountdownSpellIds = {
     [375810] = true, [375261] = true, [392228] = true, [369893] = true, [375236] = true,
     [378430] = true, [386331] = true, [370014] = true, [370326] = true, [370329] = true,
@@ -173,10 +215,6 @@ local function tableContains(table, key)
     return table[key] ~= nil
 end
 
-local function getCharacterKey()
-    return UnitName("player") .. "-" .. GetRealmName()
-end
-
 --------------------------------------------------------------------------------
 -- class methods
 --------------------------------------------------------------------------------
@@ -237,44 +275,35 @@ function DragonSpeedway:generateGameTables()
 
 end
 
--- generate defaults for db
-function DragonSpeedway:generateDefaults()
-    local defaultBGM, defaultFinalCDM, defaultCDM, defaultVictoryM = {}, {}, {}, {}
+-- set dynamic sound defaults (called after LSM is available)
+function DragonSpeedway:setDynamicDefaults()
+    local defaultBGM, defaultFinalCDM, defaultCDM, defaultVictoryM = DragonSpeedway_generateDefaultMusic()
 
-    defaultBGM, defaultFinalCDM, defaultCDM, defaultVictoryM = DragonSpeedway_generateDefaultMusic()
-
-    self.defaults = {
-        music = defaultBGM,
-        countdownSound = defaultCDM,
-        countdownFinalSound = defaultFinalCDM,
-        victorySound = defaultVictoryM,
-        enableMusic = true,
-        enableCountdownSound = true,
-        enableCountdownFinalSound = true,
-        enableVictorySound = true,
-        enableSkywardAscentSound = false,
-        enableSurgeForwardSound = false,
-        enableWhirlingSurgeSound = false,
-        enableBronzeRewindSound = false,
-        musicVolume = 100,
-        enableMusicVolume = false,
-        forceMusicSetting = false,
-        randomMusic = 'All',
-        enableRandomMusic = false,
-        skywardAscentSound = defaultFinalCDM,
-        surgeForwardSound = defaultFinalCDM,
-        whirlingSurgeSound = defaultFinalCDM,
-        bronzeRewindSound = defaultFinalCDM,
-        cameraDistance = 100,
-        enableCameraDistance = false,
-        enableMountCameraDistance = false,
-        musicRacesSetting = true,
-        spellRacesSetting = true,
-        cameraRacesSetting = true,
-        volumeRacesSetting = true,
-        forceMusicRacesSetting = true,
-        defMusicRacesSetting = false,
-    }
+    -- only set if not already configured by user
+    if not self.db.profile.music then
+        self.db.profile.music = defaultBGM
+    end
+    if not self.db.profile.countdownSound then
+        self.db.profile.countdownSound = defaultCDM
+    end
+    if not self.db.profile.countdownFinalSound then
+        self.db.profile.countdownFinalSound = defaultFinalCDM
+    end
+    if not self.db.profile.victorySound then
+        self.db.profile.victorySound = defaultVictoryM
+    end
+    if not self.db.profile.skywardAscentSound then
+        self.db.profile.skywardAscentSound = defaultFinalCDM
+    end
+    if not self.db.profile.surgeForwardSound then
+        self.db.profile.surgeForwardSound = defaultFinalCDM
+    end
+    if not self.db.profile.whirlingSurgeSound then
+        self.db.profile.whirlingSurgeSound = defaultFinalCDM
+    end
+    if not self.db.profile.bronzeRewindSound then
+        self.db.profile.bronzeRewindSound = defaultFinalCDM
+    end
 end
 
 function DragonSpeedway:getRandomMusic()
@@ -293,11 +322,11 @@ end
 function DragonSpeedway:getRandomMusicFromGroup()
     local randomMusic, isRandomizable = nil, false
 
-    if self.db.randomMusic == addonVars.randomGroups['Spyro'] then
+    if self.db.profile.randomMusic == addonVars.randomGroups['Spyro'] then
         randomMusic, isRandomizable = self:getRandomMusicAndAmount(addonVars.spyroEverythingTable)
-    elseif self.db.randomMusic == addonVars.randomGroups['Custom'] then
+    elseif self.db.profile.randomMusic == addonVars.randomGroups['Custom'] then
         randomMusic, isRandomizable = self:getRandomMusicAndAmount(addonVars.custom)
-    elseif self.db.randomMusic == addonVars.randomGroups['All'] then
+    elseif self.db.profile.randomMusic == addonVars.randomGroups['All'] then
         randomMusic, isRandomizable = self:getRandomMusicAndAmount(addonVars.musicEverythingTable)
     end
 
@@ -326,16 +355,6 @@ function DragonSpeedway:setCameraDistance(level)
     else
         CameraZoomOut(-delta)
     end
-end
-
-function DragonSpeedway:getCharacterData()
-    local charKey = getCharacterKey()
-    self.db.characters = self.db.characters or {}
-    self.db.characters[charKey] = self.db.characters[charKey] or {
-        globalCameraDistance = 0,
-        isMountedWithGlide = false,
-    }
-    return self.db.characters[charKey]
 end
 
 --------------------------------------------------------------------------------
@@ -384,55 +403,53 @@ function DragonSpeedway:handleAuraUpdate(unitAuraUpdateInfo)
 end
 
 function DragonSpeedway:handleDragonRaceStart()
-    if self.db.enableMusic then
+    if self.db.profile.enableMusic then
         local bgm = nil
 
-        if self.db.forceMusicSetting then
+        if self.db.profile.forceMusicSetting then
             globalMusicEnable = C_CVar.GetCVar("Sound_EnableMusic")
             C_CVar.SetCVar("Sound_EnableMusic", 1)
         end
-        if self.db.enableMusicVolume then
+        if self.db.profile.enableMusicVolume then
             globalMusicVolume = C_CVar.GetCVar("Sound_MusicVolume")
-            C_CVar.SetCVar("Sound_MusicVolume", self.db.musicVolume / 100)
+            C_CVar.SetCVar("Sound_MusicVolume", self.db.profile.musicVolume / 100)
         end
-        if self.db.enableRandomMusic then
+        if self.db.profile.enableRandomMusic then
             bgm = LSM:Fetch("sound", self:getRandomMusic(), noDefault)
         else
-            bgm = LSM:Fetch("sound", self.db.music, noDefault)
+            bgm = LSM:Fetch("sound", self.db.profile.music, noDefault)
         end
         PlayMusic(bgm)
     end
-    if self.db.enableCountdownFinalSound then
-        local cdm = LSM:Fetch("sound", self.db.countdownFinalSound, noDefault)
+    if self.db.profile.enableCountdownFinalSound then
+        local cdm = LSM:Fetch("sound", self.db.profile.countdownFinalSound, noDefault)
         PlaySoundFile(cdm, "SFX")
     end
 end
 
 function DragonSpeedway:handleDragonRaceCountdown()
-    if self.db.enableCameraDistance then
-        local charData = self:getCharacterData()
-        charData.globalCameraDistance = GetCameraZoom()
-        self:setCameraDistance(self.db.cameraDistance)
+    if self.db.profile.enableCameraDistance then
+        self.db.char.globalCameraDistance = GetCameraZoom()
+        self:setCameraDistance(self.db.profile.cameraDistance)
     end
 end
 
 function DragonSpeedway:handleDragonRaceEnd()
-    if self.db.enableVictorySound then
-        local victory = LSM:Fetch("sound", self.db.victorySound, noDefault)
+    if self.db.profile.enableVictorySound then
+        local victory = LSM:Fetch("sound", self.db.profile.victorySound, noDefault)
         PlaySoundFile(victory, "SFX")
     end
     StopMusic()
-    if self.db.forceMusicSetting then
+    if self.db.profile.forceMusicSetting then
         C_CVar.SetCVar("Sound_EnableMusic", globalMusicEnable)
     end
-    if self.db.enableMusicVolume then
+    if self.db.profile.enableMusicVolume then
         C_CVar.SetCVar("Sound_MusicVolume", globalMusicVolume)
     end
-    if self.db.enableCameraDistance then
-        local charData = self:getCharacterData()
-        self:setCameraDistance(charData.globalCameraDistance)
+    if self.db.profile.enableCameraDistance then
+        self:setCameraDistance(self.db.char.globalCameraDistance)
     end
-    if self.db.defMusicRacesSetting then
+    if self.db.profile.defMusicRacesSetting then
         -- default dragonriding music
         -- sound/music/dragonflight/mus_100_dragonrace_h.mp3
         PlayMusic(4887933)
@@ -444,20 +461,18 @@ function DragonSpeedway:handleDragonRaceRestart()
 end
 
 function DragonSpeedway:handleDragonridingMount()
-    local charData = self:getCharacterData()
-
     -- only apply camera on fresh mount, not relog
-    if self.db.enableMountCameraDistance
-    and not self.db.enableCameraDistance then
-        if not charData.isMountedWithGlide then
-            charData.globalCameraDistance = GetCameraZoom()
-            self:setCameraDistance(self.db.cameraDistance)
-            charData.isMountedWithGlide = true
+    if self.db.profile.enableMountCameraDistance
+    and not self.db.profile.enableCameraDistance then
+        if not self.db.char.isMountedWithGlide then
+            self.db.char.globalCameraDistance = GetCameraZoom()
+            self:setCameraDistance(self.db.profile.cameraDistance)
+            self.db.char.isMountedWithGlide = true
         end
         -- if flag already true, this is relog - don't touch camera
     end
 
-    if self.db.defMusicRacesSetting then
+    if self.db.profile.defMusicRacesSetting then
         -- default dragonriding music
         -- sound/music/dragonflight/mus_100_dragonrace_h.mp3
         PlayMusic(4887933)
@@ -465,33 +480,28 @@ function DragonSpeedway:handleDragonridingMount()
 end
 
 function DragonSpeedway:handleDragonridingDismount()
-    local charData = self:getCharacterData()
-
-    if charData.isMountedWithGlide then
-        if self.db.enableMountCameraDistance
-        and not self.db.enableCameraDistance then
-            self:setCameraDistance(charData.globalCameraDistance)
+    if self.db.char.isMountedWithGlide then
+        if self.db.profile.enableMountCameraDistance
+        and not self.db.profile.enableCameraDistance then
+            self:setCameraDistance(self.db.char.globalCameraDistance)
         end
-        charData.isMountedWithGlide = false
+        self.db.char.isMountedWithGlide = false
     end
 
     StopMusic()
 end
 
 function DragonSpeedway:reconcileMountState()
-    local charData = self:getCharacterData()
-
     if IsMounted() then
-        -- still mounted - don't touch camera or state
-        -- user may have manually adjusted zoom while mounted
+        -- don't touch camera or state
         return
     end
 
-    if charData.isMountedWithGlide then
+    if self.db.char.isMountedWithGlide then
         -- was mounted with camera applied but now dismounted
         self:handleDragonridingDismount()
     end
-    -- not mounted and flag not set = nothing to do
+    -- not mounted and flag not set - nothing to do
 end
 
 --------------------------------------------------------------------------------
@@ -506,20 +516,14 @@ function DragonSpeedway:ADDON_LOADED(event, addOnName)
 	if addOnName == "DragonSpeedway" then
         print(addOnName, "loaded. Type '/ds' for settings or '/ds stop' for stopping the currently playing music")
 
-        -- initialize saved variables
-        DragonSpeedwayDB = DragonSpeedwayDB or {}
-        self.db = DragonSpeedwayDB
-
-        self:generateDefaults()
-
-        for key, value in pairs(self.defaults) do
-            if self.db[key] == nil then
-                self.db[key] = value
-            end
-        end
+        -- initialize AceDB (no third param = character-specific profiles by default)
+        self.db = LibStub("AceDB-3.0"):New("DragonSpeedwayDB", defaults)
 
         -- build hashtable of sounds
         self.hashtable = LSM:HashTable("sound")
+
+        -- set dynamic sound defaults (needs LSM loaded first)
+        self:setDynamicDefaults()
 
         -- validate sounds
         if not LSM:IsValid("sound") then
@@ -548,12 +552,11 @@ function DragonSpeedway:UNIT_AURA(event, ...)
 end
 
 function DragonSpeedway:PLAYER_CAN_GLIDE_CHANGED(event, canGlide)
-    local charData = self:getCharacterData()
-
-    if canGlide and IsMounted() then
-        -- mounted a dynamic-flight mount in a dynamic-flight zone
+    if canGlide then
+        -- on a dynamic-flight mount in a dynamic-flight zone
+        -- IsMounted() may still be false due to event timing
         self:handleDragonridingMount()
-    elseif not canGlide and charData.isMountedWithGlide and not IsMounted() then
+    elseif not canGlide and self.db.char.isMountedWithGlide and not IsMounted() then
         -- actually dismounted (not just zone transition to no-fly area)
         self:handleDragonridingDismount()
     end
@@ -561,11 +564,9 @@ function DragonSpeedway:PLAYER_CAN_GLIDE_CHANGED(event, canGlide)
 end
 
 function DragonSpeedway:PLAYER_MOUNT_DISPLAY_CHANGED(event)
-    local charData = self:getCharacterData()
-
-    -- fallback: catches dismount when canGlide was already false
-    -- (e.g., dismounting in a no-fly zone)
-    if charData.isMountedWithGlide and not IsMounted() then
+    -- fallback - catches dismount when canGlide was already false
+    -- (ie. dismounting in a no-fly zone)
+    if self.db.char.isMountedWithGlide and not IsMounted() then
         self:handleDragonridingDismount()
     end
 end

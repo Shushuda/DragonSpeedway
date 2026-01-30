@@ -25,32 +25,32 @@ local spyroThree = "Spyro 3"
 -- OnClick function for picking an option
 local function setValue(self, soundType, newValue, checked)
     if soundType == 'music' then
-        DragonSpeedway.db.music = newValue
-        UIDropDownMenu_SetText(musicDropDown, DragonSpeedway.db.music)
+        DragonSpeedway.db.profile.music = newValue
+        UIDropDownMenu_SetText(musicDropDown, DragonSpeedway.db.profile.music)
     elseif soundType == 'countdown' then
-        DragonSpeedway.db.countdownSound = newValue
-        UIDropDownMenu_SetText(countdownDropDown, DragonSpeedway.db.countdownSound)
+        DragonSpeedway.db.profile.countdownSound = newValue
+        UIDropDownMenu_SetText(countdownDropDown, DragonSpeedway.db.profile.countdownSound)
     elseif soundType == 'countdown_final' then
-        DragonSpeedway.db.countdownFinalSound = newValue
-        UIDropDownMenu_SetText(countdownFinalDropDown, DragonSpeedway.db.countdownFinalSound)
+        DragonSpeedway.db.profile.countdownFinalSound = newValue
+        UIDropDownMenu_SetText(countdownFinalDropDown, DragonSpeedway.db.profile.countdownFinalSound)
     elseif soundType == 'victory' then
-        DragonSpeedway.db.victorySound = newValue
-        UIDropDownMenu_SetText(victoryDropDown, DragonSpeedway.db.victorySound)
+        DragonSpeedway.db.profile.victorySound = newValue
+        UIDropDownMenu_SetText(victoryDropDown, DragonSpeedway.db.profile.victorySound)
     elseif soundType == 'random' then
-        DragonSpeedway.db.randomMusic = newValue
-        UIDropDownMenu_SetText(randomDropDown, DragonSpeedway.db.randomMusic)
+        DragonSpeedway.db.profile.randomMusic = newValue
+        UIDropDownMenu_SetText(randomDropDown, DragonSpeedway.db.profile.randomMusic)
     elseif soundType == 'skyward_ascent' then
-        DragonSpeedway.db.skywardAscentSound = newValue
-        UIDropDownMenu_SetText(skywardAscentDropDown, DragonSpeedway.db.skywardAscentSound)
+        DragonSpeedway.db.profile.skywardAscentSound = newValue
+        UIDropDownMenu_SetText(skywardAscentDropDown, DragonSpeedway.db.profile.skywardAscentSound)
     elseif soundType == 'surge_forward' then
-        DragonSpeedway.db.surgeForwardSound = newValue
-        UIDropDownMenu_SetText(surgeForwardDropDown, DragonSpeedway.db.surgeForwardSound)
+        DragonSpeedway.db.profile.surgeForwardSound = newValue
+        UIDropDownMenu_SetText(surgeForwardDropDown, DragonSpeedway.db.profile.surgeForwardSound)
     elseif soundType == 'whirling_surge' then
-        DragonSpeedway.db.whirlingSurgeSound = newValue
-        UIDropDownMenu_SetText(whirlingSurgeDropDown, DragonSpeedway.db.whirlingSurgeSound)
+        DragonSpeedway.db.profile.whirlingSurgeSound = newValue
+        UIDropDownMenu_SetText(whirlingSurgeDropDown, DragonSpeedway.db.profile.whirlingSurgeSound)
     elseif soundType == 'bronze_rewind' then
-        DragonSpeedway.db.bronzeRewindSound = newValue
-        UIDropDownMenu_SetText(bronzeRewindDropDown, DragonSpeedway.db.bronzeRewindSound)
+        DragonSpeedway.db.profile.bronzeRewindSound = newValue
+        UIDropDownMenu_SetText(bronzeRewindDropDown, DragonSpeedway.db.profile.bronzeRewindSound)
     end
 
     CloseDropDownMenus()
@@ -79,7 +79,7 @@ local function musicDropDownInit(self, level, menuList)
         info.func = setValue
         for key, value in ipairs(addonVars.spyroOneTable) do
             info.text = value
-            info.arg1, info.arg2, info.checked = 'music', value, value == DragonSpeedway.db.music
+            info.arg1, info.arg2, info.checked = 'music', value, value == DragonSpeedway.db.profile.music
             UIDropDownMenu_AddButton(info, level)
         end
     elseif menuList == 'Spyro2' then
@@ -87,7 +87,7 @@ local function musicDropDownInit(self, level, menuList)
         info.func = setValue
         for key, value in ipairs(addonVars.spyroTwoTable) do
             info.text = value
-            info.arg1, info.arg2, info.checked = 'music', value, value == DragonSpeedway.db.music
+            info.arg1, info.arg2, info.checked = 'music', value, value == DragonSpeedway.db.profile.music
             UIDropDownMenu_AddButton(info, level)
         end
     elseif menuList == 'Spyro3' then
@@ -95,7 +95,7 @@ local function musicDropDownInit(self, level, menuList)
         info.func = setValue
         for key, value in ipairs(addonVars.spyroThreeTable) do
             info.text = value
-            info.arg1, info.arg2, info.checked = 'music', value, value == DragonSpeedway.db.music
+            info.arg1, info.arg2, info.checked = 'music', value, value == DragonSpeedway.db.profile.music
             UIDropDownMenu_AddButton(info, level)
         end
     elseif menuList == 'custom' then
@@ -103,7 +103,7 @@ local function musicDropDownInit(self, level, menuList)
         info.func = setValue
         for key, value in ipairs(addonVars.custom) do
             info.text = value
-            info.arg1, info.arg2, info.checked = 'music', value, value == DragonSpeedway.db.music
+            info.arg1, info.arg2, info.checked = 'music', value, value == DragonSpeedway.db.profile.music
             UIDropDownMenu_AddButton(info, level)
         end
     end
@@ -116,7 +116,7 @@ local function countdownFinalDropDownInit(self, level, menuList)
     info.func = setValue
     for key, value in ipairs(addonVars.sounds) do
         info.text = value
-        info.arg1, info.arg2, info.checked = 'countdown_final', value, value == DragonSpeedway.db.countdownFinalSound
+        info.arg1, info.arg2, info.checked = 'countdown_final', value, value == DragonSpeedway.db.profile.countdownFinalSound
         UIDropDownMenu_AddButton(info, level)
     end
 end
@@ -128,7 +128,7 @@ local function victoryDropDownInit(self, level, menuList)
     info.func = setValue
     for key, value in ipairs(addonVars.sounds) do
         info.text = value
-        info.arg1, info.arg2, info.checked = 'victory', value, value == DragonSpeedway.db.victorySound
+        info.arg1, info.arg2, info.checked = 'victory', value, value == DragonSpeedway.db.profile.victorySound
         UIDropDownMenu_AddButton(info, level)
     end
 end
@@ -140,7 +140,7 @@ local function randomDropDownInit(self, level, menuList)
     info.func = setValue
     for key, value in ipairs(addonVars.randomGroupsKeys) do
         info.text = value
-        info.arg1, info.arg2, info.checked = 'random', value, value == DragonSpeedway.db.randomMusic
+        info.arg1, info.arg2, info.checked = 'random', value, value == DragonSpeedway.db.profile.randomMusic
         UIDropDownMenu_AddButton(info, level)
     end
 end
@@ -156,7 +156,7 @@ local function skywardAscentDropDownInit(self, level, menuList)
     info.func = setValue
     for key, value in ipairs(addonVars.sounds) do
         info.text = value
-        info.arg1, info.arg2, info.checked = 'skyward_ascent', value, value == DragonSpeedway.db.skywardAscentSound
+        info.arg1, info.arg2, info.checked = 'skyward_ascent', value, value == DragonSpeedway.db.profile.skywardAscentSound
         UIDropDownMenu_AddButton(info, level)
     end
 end
@@ -168,7 +168,7 @@ local function surgeForwardDropDownInit(self, level, menuList)
     info.func = setValue
     for key, value in ipairs(addonVars.sounds) do
         info.text = value
-        info.arg1, info.arg2, info.checked = 'surge_forward', value, value == DragonSpeedway.db.surgeForwardSound
+        info.arg1, info.arg2, info.checked = 'surge_forward', value, value == DragonSpeedway.db.profile.surgeForwardSound
         UIDropDownMenu_AddButton(info, level)
     end
 end
@@ -180,7 +180,7 @@ local function whirlingSurgeDropDownInit(self, level, menuList)
     info.func = setValue
     for key, value in ipairs(addonVars.sounds) do
         info.text = value
-        info.arg1, info.arg2, info.checked = 'whirling_surge', value, value == DragonSpeedway.db.whirlingSurgeSound
+        info.arg1, info.arg2, info.checked = 'whirling_surge', value, value == DragonSpeedway.db.profile.whirlingSurgeSound
         UIDropDownMenu_AddButton(info, level)
     end
 end
@@ -192,7 +192,7 @@ local function bronzeRewindDropDownInit(self, level, menuList)
     info.func = setValue
     for key, value in ipairs(addonVars.sounds) do
         info.text = value
-        info.arg1, info.arg2, info.checked = 'bronze_rewind', value, value == DragonSpeedway.db.bronzeRewindSound
+        info.arg1, info.arg2, info.checked = 'bronze_rewind', value, value == DragonSpeedway.db.profile.bronzeRewindSound
         UIDropDownMenu_AddButton(info, level)
     end
 end
@@ -240,7 +240,7 @@ function DragonSpeedway:InitializeMainPanel()
     local randomDropDown = CreateFrame("Frame", "randomDropDown", self.panel, "UIDropDownMenuTemplate")
     randomDropDown:SetPoint("TOPLEFT", randomTitle, -20, -20)
     UIDropDownMenu_SetWidth(randomDropDown, 200)
-    UIDropDownMenu_SetText(randomDropDown, self.db.randomMusic)
+    UIDropDownMenu_SetText(randomDropDown, self.db.profile.randomMusic)
 
     UIDropDownMenu_Initialize(randomDropDown, randomDropDownInit, _, 1)
 
@@ -249,10 +249,10 @@ function DragonSpeedway:InitializeMainPanel()
 	randomButton:SetPoint("TOPRIGHT", randomDropDown, 170, -1)
     randomButton.Text:SetText("Enable music randomizer")
 	randomButton:SetScript("OnClick", function(self)
-		DragonSpeedway.db.enableRandomMusic = self:GetChecked()
+		DragonSpeedway.db.profile.enableRandomMusic = self:GetChecked()
 	end)
     -- initial button state
-	randomButton:SetChecked(self.db.enableRandomMusic)
+	randomButton:SetChecked(self.db.profile.enableRandomMusic)
 
     --------------------------------
     -- volume overwrite header
@@ -289,11 +289,11 @@ function DragonSpeedway:InitializeMainPanel()
     _G[volumeSlider:GetName().."Low"]:SetText("0%")
 	_G[volumeSlider:GetName().."High"]:SetText("100%")
     -- initial value
-    volumeSlider:SetValue(self.db.musicVolume)
-    volumeSlider.Text:SetText(self.db.musicVolume)
+    volumeSlider:SetValue(self.db.profile.musicVolume)
+    volumeSlider.Text:SetText(self.db.profile.musicVolume)
     -- action
     volumeSlider:SetScript("OnValueChanged", function(self, value, userInput)
-        DragonSpeedway.db.musicVolume = value
+        DragonSpeedway.db.profile.musicVolume = value
         volumeSlider.Text:SetText(value)
 	end)
     -- render slider
@@ -305,10 +305,10 @@ function DragonSpeedway:InitializeMainPanel()
 	volumeButton:SetPoint("TOPRIGHT", volumeSlider, 200, 5)
     volumeButton.Text:SetText("Enable music volume overwrite")
 	volumeButton:SetScript("OnClick", function(self)
-		DragonSpeedway.db.enableMusicVolume = self:GetChecked()
+		DragonSpeedway.db.profile.enableMusicVolume = self:GetChecked()
 	end)
     -- initial button state
-	volumeButton:SetChecked(self.db.enableMusicVolume)
+	volumeButton:SetChecked(self.db.profile.enableMusicVolume)
 
     --------------------------------
     -- force enable music button
@@ -317,10 +317,10 @@ function DragonSpeedway:InitializeMainPanel()
 	forceMusicButton:SetPoint("TOPLEFT", volumeLine, 10, -94)
     forceMusicButton.Text:SetText("Enable music if disabled")
 	forceMusicButton:SetScript("OnClick", function(self)
-		DragonSpeedway.db.forceMusicSetting = self:GetChecked()
+		DragonSpeedway.db.profile.forceMusicSetting = self:GetChecked()
 	end)
     -- initial button state
-	forceMusicButton:SetChecked(self.db.forceMusicSetting)
+	forceMusicButton:SetChecked(self.db.profile.forceMusicSetting)
 
     --------------------------------
     -- race settings header
@@ -342,10 +342,10 @@ function DragonSpeedway:InitializeMainPanel()
 	defMusicRacesButton:SetPoint("TOPLEFT", settingsLine, 10, -15)
     defMusicRacesButton.Text:SetText("Play default Dragonriding music outside of races")
 	defMusicRacesButton:SetScript("OnClick", function(self)
-		DragonSpeedway.db.defMusicRacesSetting = self:GetChecked()
+		DragonSpeedway.db.profile.defMusicRacesSetting = self:GetChecked()
 	end)
     -- initial button state
-	defMusicRacesButton:SetChecked(self.db.defMusicRacesSetting)
+	defMusicRacesButton:SetChecked(self.db.profile.defMusicRacesSetting)
 
 
     Settings.RegisterAddOnCategory(self.category)
@@ -389,7 +389,7 @@ function DragonSpeedway:InitializeMusicPanel()
     local countdownFinalDropDown = CreateFrame("Frame", "countdownFinalDropDown", panelMusic, "UIDropDownMenuTemplate")
     countdownFinalDropDown:SetPoint("TOPLEFT", countdownFinalTitle, -20, -20)
     UIDropDownMenu_SetWidth(countdownFinalDropDown, 200)
-    UIDropDownMenu_SetText(countdownFinalDropDown, self.db.countdownFinalSound)
+    UIDropDownMenu_SetText(countdownFinalDropDown, self.db.profile.countdownFinalSound)
 
     UIDropDownMenu_Initialize(countdownFinalDropDown, countdownFinalDropDownInit, _, 1)
 
@@ -399,7 +399,7 @@ function DragonSpeedway:InitializeMusicPanel()
 	countdownFinalPlayButton:SetText("PLAY")
 	countdownFinalPlayButton:SetWidth(50)
 	countdownFinalPlayButton:SetScript("OnClick", function()
-        local cdm = LSM:Fetch("sound", self.db.countdownFinalSound, noDefault)
+        local cdm = LSM:Fetch("sound", self.db.profile.countdownFinalSound, noDefault)
         PlaySoundFile(cdm, "SFX")
 	end)
 
@@ -408,10 +408,10 @@ function DragonSpeedway:InitializeMusicPanel()
     countdownFinalButton:SetPoint("TOPRIGHT", countdownFinalDropDown, 200, -1)
 	countdownFinalButton.Text:SetText("Enable race started sound")
 	countdownFinalButton:SetScript("OnClick", function(self)
-		DragonSpeedway.db.enableCountdownFinalSound = self:GetChecked()
+		DragonSpeedway.db.profile.enableCountdownFinalSound = self:GetChecked()
 	end)
     -- initial button state
-	countdownFinalButton:SetChecked(self.db.enableCountdownFinalSound)
+	countdownFinalButton:SetChecked(self.db.profile.enableCountdownFinalSound)
 
     --------------------------------
     -- music
@@ -423,7 +423,7 @@ function DragonSpeedway:InitializeMusicPanel()
     local musicDropDown = CreateFrame("Frame", "musicDropDown", panelMusic, "UIDropDownMenuTemplate")
     musicDropDown:SetPoint("TOPLEFT", musicTitle, -20, -20)
     UIDropDownMenu_SetWidth(musicDropDown, 200)
-    UIDropDownMenu_SetText(musicDropDown, self.db.music)
+    UIDropDownMenu_SetText(musicDropDown, self.db.profile.music)
 
     UIDropDownMenu_Initialize(musicDropDown, musicDropDownInit, _, 1)
 
@@ -433,7 +433,7 @@ function DragonSpeedway:InitializeMusicPanel()
 	musicPlayButton:SetText("PLAY")
 	musicPlayButton:SetWidth(50)
 	musicPlayButton:SetScript("OnClick", function()
-        local bgm = LSM:Fetch("sound", self.db.music, noDefault)
+        local bgm = LSM:Fetch("sound", self.db.profile.music, noDefault)
         PlayMusic(bgm)
 	end)
 
@@ -451,10 +451,10 @@ function DragonSpeedway:InitializeMusicPanel()
 	musicButton:SetPoint("TOPRIGHT", musicDropDown, 200, -1)
 	musicButton.Text:SetText("Enable BGM music")
 	musicButton:SetScript("OnClick", function(self)
-		DragonSpeedway.db.enableMusic = self:GetChecked()
+		DragonSpeedway.db.profile.enableMusic = self:GetChecked()
 	end)
     -- initial button state
-	musicButton:SetChecked(self.db.enableMusic)
+	musicButton:SetChecked(self.db.profile.enableMusic)
 
     --------------------------------
     -- victory sound
@@ -466,7 +466,7 @@ function DragonSpeedway:InitializeMusicPanel()
     local victoryDropDown = CreateFrame("Frame", "victoryDropDown", panelMusic, "UIDropDownMenuTemplate")
     victoryDropDown:SetPoint("TOPLEFT", victoryTitle, -20, -20)
     UIDropDownMenu_SetWidth(victoryDropDown, 200)
-    UIDropDownMenu_SetText(victoryDropDown, self.db.victorySound)
+    UIDropDownMenu_SetText(victoryDropDown, self.db.profile.victorySound)
 
     UIDropDownMenu_Initialize(victoryDropDown, victoryDropDownInit, _, 1)
 
@@ -476,7 +476,7 @@ function DragonSpeedway:InitializeMusicPanel()
 	victoryPlayButton:SetText("PLAY")
 	victoryPlayButton:SetWidth(50)
 	victoryPlayButton:SetScript("OnClick", function()
-        local cdm = LSM:Fetch("sound", self.db.victorySound, noDefault)
+        local cdm = LSM:Fetch("sound", self.db.profile.victorySound, noDefault)
         PlaySoundFile(cdm, "SFX")
 	end)
 
@@ -485,10 +485,10 @@ function DragonSpeedway:InitializeMusicPanel()
 	victoryButton:SetPoint("TOPRIGHT", victoryDropDown, 200, -1)
 	victoryButton.Text:SetText("Enable race finished sound")
 	victoryButton:SetScript("OnClick", function(self)
-		DragonSpeedway.db.enableVictorySound = self:GetChecked()
+		DragonSpeedway.db.profile.enableVictorySound = self:GetChecked()
 	end)
     -- initial button state
-	victoryButton:SetChecked(self.db.enableVictorySound)
+	victoryButton:SetChecked(self.db.profile.enableVictorySound)
 
 
     Settings.RegisterAddOnCategory(category_music)
@@ -544,11 +544,11 @@ function DragonSpeedway:InitializeCameraPanel()
     _G[distanceSlider:GetName().."Low"]:SetText("0")
 	_G[distanceSlider:GetName().."High"]:SetText("39")
     -- initial value
-    distanceSlider:SetValue(self.db.cameraDistance)
-    distanceSlider.Text:SetText(self.db.cameraDistance)
+    distanceSlider:SetValue(self.db.profile.cameraDistance)
+    distanceSlider.Text:SetText(self.db.profile.cameraDistance)
     -- action
     distanceSlider:SetScript("OnValueChanged", function(self, value, userInput)
-        DragonSpeedway.db.cameraDistance = value
+        DragonSpeedway.db.profile.cameraDistance = value
         distanceSlider.Text:SetText(value)
 	end)
     -- render slider
@@ -560,20 +560,20 @@ function DragonSpeedway:InitializeCameraPanel()
     distanceMountButton:SetPoint("TOPRIGHT", distanceSlider, 200, 5)
     distanceMountButton.Text:SetText("Enable camera distance overwrite")
     distanceMountButton:SetScript("OnClick", function(self)
-        DragonSpeedway.db.enableMountCameraDistance = self:GetChecked()
+        DragonSpeedway.db.profile.enableMountCameraDistance = self:GetChecked()
     end)
     -- initial button state
-    distanceMountButton:SetChecked(self.db.enableMountCameraDistance)
+    distanceMountButton:SetChecked(self.db.profile.enableMountCameraDistance)
 
     -- race distance ON OFF button
     local distanceButton = CreateFrame("CheckButton", nil, panelCamera, "InterfaceOptionsCheckButtonTemplate")
 	distanceButton:SetPoint("TOPRIGHT", distanceMountButton, 30, -30)
     distanceButton.Text:SetText("Only in races")
 	distanceButton:SetScript("OnClick", function(self)
-		DragonSpeedway.db.enableCameraDistance = self:GetChecked()
+		DragonSpeedway.db.profile.enableCameraDistance = self:GetChecked()
 	end)
     -- initial button state
-	distanceButton:SetChecked(self.db.enableCameraDistance)
+	distanceButton:SetChecked(self.db.profile.enableCameraDistance)
 
 
     Settings.RegisterAddOnCategory(category_camera)
