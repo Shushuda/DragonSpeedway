@@ -28,7 +28,7 @@ local LSM = LibStub("LibSharedMedia-3.0")
 
 -- Custom music
 
--- <place the code here
+-- <place the code here>
 
 
 -- Custom sound effects
