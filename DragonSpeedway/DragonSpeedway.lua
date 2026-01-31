@@ -36,6 +36,9 @@ local globalMusicVolume = C_CVar.GetCVar("Sound_MusicVolume")
 local globalMusicEnable = C_CVar.GetCVar("Sound_EnableMusic")
 local lastPlayedMusic = nil
 local noDefault = false
+local soarSpellId = 369536
+local soarCastStartTime = nil
+local soarCastTimeout = 5  -- seconds
 
 local defaults = {
     profile = {
@@ -65,6 +68,8 @@ local defaults = {
         cameraDistance = 39,
         enableCameraDistance = false,
         enableMountCameraDistance = false,
+        excludeDracthyrSoar = false,
+        excludeDruidFlightForm = false,
         musicRacesSetting = true,
         spellRacesSetting = true,
         cameraRacesSetting = true,
@@ -460,6 +465,29 @@ function DragonSpeedway:handleDragonRaceRestart()
     StopMusic()
 end
 
+function DragonSpeedway:isDruidFlightForm()
+    if self.db.profile.excludeDruidFlightForm then
+        if GetShapeshiftFormID() == 27 then  -- flight form
+            return true
+        end
+    end
+    return false
+end
+
+function DragonSpeedway:checkDracthyrSoarExclusion()
+    if self.db.profile.excludeDracthyrSoar then
+        local _, raceFile = UnitRace("player")
+        if raceFile == "Dracthyr" then
+            -- check if soar cast recently started and hasn't timed out
+            if soarCastStartTime and (GetTime() - soarCastStartTime) < soarCastTimeout then
+                soarCastStartTime = nil  -- consume the flag
+                return true
+            end
+        end
+    end
+    return false
+end
+
 function DragonSpeedway:handleDragonridingMount()
     -- only apply camera on fresh mount, not relog
     if self.db.profile.enableMountCameraDistance
@@ -555,6 +583,9 @@ function DragonSpeedway:PLAYER_CAN_GLIDE_CHANGED(event, canGlide)
     if canGlide then
         -- on a dynamic-flight mount in a dynamic-flight zone
         -- IsMounted() may still be false due to event timing
+
+        if self:isDruidFlightForm() then return end
+        if self:checkDracthyrSoarExclusion() then return end
         self:handleDragonridingMount()
     elseif not canGlide and self.db.char.isMountedWithGlide and not IsMounted() then
         -- actually dismounted (not just zone transition to no-fly area)
@@ -580,6 +611,25 @@ function DragonSpeedway:LOADING_SCREEN_DISABLED(event, ...)
     addonVars.SchedulerLib:ScheduleUniqueTask(2, self.reconcileMountState, self)
 end
 
+-- soar detection via spellcast events
+function DragonSpeedway:UNIT_SPELLCAST_START(event, unit, castGUID, spellId)
+    if unit ~= "player" then return end
+    if issecretvalue(spellId) then return end
+    if spellId == soarSpellId then
+        soarCastStartTime = GetTime()
+    end
+end
+
+function DragonSpeedway:UNIT_SPELLCAST_FAILED(event, unit, castGUID, spellId)
+    if unit ~= "player" then return end
+    soarCastStartTime = nil
+end
+
+function DragonSpeedway:UNIT_SPELLCAST_INTERRUPTED(event, unit, castGUID, spellId)
+    if unit ~= "player" then return end
+    soarCastStartTime = nil
+end
+
 --------------------------------------------------------------------------------
 -- register events and listen
 --------------------------------------------------------------------------------
@@ -589,6 +639,9 @@ DragonSpeedway:RegisterEvent("UNIT_AURA")
 DragonSpeedway:RegisterEvent("LOADING_SCREEN_DISABLED")
 DragonSpeedway:RegisterEvent("PLAYER_CAN_GLIDE_CHANGED")
 DragonSpeedway:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED")
+DragonSpeedway:RegisterEvent("UNIT_SPELLCAST_START")
+DragonSpeedway:RegisterEvent("UNIT_SPELLCAST_FAILED")
+DragonSpeedway:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
 
 
 DragonSpeedway:SetScript("OnEvent", DragonSpeedway.OnEvent)

@@ -575,6 +575,26 @@ function DragonSpeedway:InitializeCameraPanel()
     -- initial button state
 	distanceButton:SetChecked(self.db.profile.enableCameraDistance)
 
+    -- exclude Dracthyr Soar ON OFF button
+    local excludeSoarButton = CreateFrame("CheckButton", nil, panelCamera, "InterfaceOptionsCheckButtonTemplate")
+    excludeSoarButton:SetPoint("TOPRIGHT", distanceButton, 0, -30)
+    excludeSoarButton.Text:SetText("Exclude Dracthyr Soar")
+    excludeSoarButton:SetScript("OnClick", function(self)
+        DragonSpeedway.db.profile.excludeDracthyrSoar = self:GetChecked()
+    end)
+    -- initial button state
+    excludeSoarButton:SetChecked(self.db.profile.excludeDracthyrSoar)
+
+    -- exclude Druid Flight Form ON OFF button
+    local excludeFlightFormButton = CreateFrame("CheckButton", nil, panelCamera, "InterfaceOptionsCheckButtonTemplate")
+    excludeFlightFormButton:SetPoint("TOPRIGHT", excludeSoarButton, 0, -30)
+    excludeFlightFormButton.Text:SetText("Exclude Druid Flight Form")
+    excludeFlightFormButton:SetScript("OnClick", function(self)
+        DragonSpeedway.db.profile.excludeDruidFlightForm = self:GetChecked()
+    end)
+    -- initial button state
+    excludeFlightFormButton:SetChecked(self.db.profile.excludeDruidFlightForm)
+
 
     Settings.RegisterAddOnCategory(category_camera)
 end
