@@ -12,6 +12,7 @@
 # IDE
 .idea
 .vscode
+DragonSpeedway.code-workspace
 
 # Claude Code
 .claude/
