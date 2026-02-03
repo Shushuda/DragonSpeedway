@@ -376,7 +376,10 @@ function DragonSpeedway:handleAuraUpdate(unitAuraUpdateInfo)
     -- and handle the sound start-up
     if unitAuraUpdateInfo.addedAuras ~= nil then
         for _, aura in ipairs(unitAuraUpdateInfo.addedAuras) do
-            if aura.spellId == dragonRaceSpellId then
+            -- skip auras with secret spellIds (catch edge cases)
+            if issecretvalue(aura.spellId) then
+                return
+            elseif aura.spellId == dragonRaceSpellId then
                 raceInstanceID = aura.auraInstanceID
             elseif tableContains(dragonRaceCountdownSpellIds, aura.spellId) then
                 raceCountdownInstanceID = aura.auraInstanceID
