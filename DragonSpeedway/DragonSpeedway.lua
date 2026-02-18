@@ -593,8 +593,19 @@ function DragonSpeedway:PLAYER_CAN_GLIDE_CHANGED(event, canGlide)
         self:handleDragonridingMount()
     elseif not canGlide and self.db.char.isMountedWithGlide and not IsMounted() then
         -- actually dismounted (not just zone transition to no-fly area)
-        -- skip if still in druid flight form (logout can fire canGlide=false)
-        if GetShapeshiftFormID() == 27 then return end
+        if GetShapeshiftFormID() == 27 then
+            -- logout (staying in form) or auto-shift (travel/swim form)
+            -- delay to see which
+            addonVars.SchedulerLib:ScheduleUniqueTask(0.1, function()
+                if GetShapeshiftFormID() == 27 then
+                    -- still in flight form, don't dismount
+                    return
+                end
+                -- shifted to another form, do dismount
+                self:handleDragonridingDismount()
+            end)
+            return
+        end
         self:handleDragonridingDismount()
     end
     -- if canGlide changed but still mounted, do nothing (zone transition)
