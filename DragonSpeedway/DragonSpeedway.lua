@@ -604,6 +604,8 @@ function DragonSpeedway:PLAYER_MOUNT_DISPLAY_CHANGED(event)
     -- fallback - catches dismount when canGlide was already false
     -- (ie. dismounting in a no-fly zone)
     if self.db.char.isMountedWithGlide and not IsMounted() then
+        -- skip if still in druid flight form (mount-to-form transition)
+        if GetShapeshiftFormID() == 27 then return end
         self:handleDragonridingDismount()
     end
 end
