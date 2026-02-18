@@ -523,7 +523,8 @@ function DragonSpeedway:handleDragonridingDismount()
 end
 
 function DragonSpeedway:reconcileMountState()
-    if IsMounted() then
+    -- druid flight form returns IsMounted() False
+    if IsMounted() or GetShapeshiftFormID() == 27 then
         -- don't touch camera or state
         return
     end
@@ -592,6 +593,8 @@ function DragonSpeedway:PLAYER_CAN_GLIDE_CHANGED(event, canGlide)
         self:handleDragonridingMount()
     elseif not canGlide and self.db.char.isMountedWithGlide and not IsMounted() then
         -- actually dismounted (not just zone transition to no-fly area)
+        -- skip if still in druid flight form (logout can fire canGlide=false)
+        if GetShapeshiftFormID() == 27 then return end
         self:handleDragonridingDismount()
     end
     -- if canGlide changed but still mounted, do nothing (zone transition)
